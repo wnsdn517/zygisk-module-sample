@@ -19,7 +19,7 @@
 
 #include <jni.h>
 
-#define ZYGISK_API_VERSION 3
+#define ZYGISK_API_VERSION 4
 
 /*
 
@@ -243,6 +243,14 @@ struct Api {
     // Returns bitwise-or'd zygisk::StateFlag values.
     uint32_t getFlags();
 
+    // Exempt the provided file descriptor from being automatically closed.
+    //
+    // This API only make sense in preAppSpecialize; calling this method in any other situation
+    // is either a no-op (returns true) or an error (returns false).
+    //
+    // When false is returned, the provided file descriptor will eventually be closed by zygote.
+    bool exemptFd(int fd);
+
     // Hook JNI native methods for a class
     //
     // Lookup all registered JNI native methods and replace it with your own methods.
@@ -259,13 +267,10 @@ struct Api {
     // 56b4346000-56b4347000  r-xp    00002000   fe:00    235       /system/bin/app_process64
     // (More details: https://man7.org/linux/man-pages/man5/proc.5.html)
     //
-    // For ELFs loaded in memory with pathname matching `regex`, replace function `symbol` with `newFunc`.
+    // The `dev` and `inode` pair uniquely identifies a file being mapped into memory.
+    // For matching ELFs loaded in memory, replace function `symbol` with `newFunc`.
     // If `oldFunc` is not nullptr, the original function pointer will be saved to `oldFunc`.
-    void pltHookRegister(const char *regex, const char *symbol, void *newFunc, void **oldFunc);
-
-    // For ELFs loaded in memory with pathname matching `regex`, exclude hooks registered for `symbol`.
-    // If `symbol` is nullptr, then all symbols will be excluded.
-    void pltHookExclude(const char *regex, const char *symbol);
+    void pltHookRegister(dev_t dev, ino_t inode, const char *symbol, void *newFunc, void **oldFunc);
 
     // Commit all the hooks that was previously registered.
     // Returns false if an error occurred.
@@ -326,8 +331,8 @@ struct api_table {
     bool (*registerModule)(api_table *, module_abi *);
 
     void (*hookJniNativeMethods)(JNIEnv *, const char *, JNINativeMethod *, int);
-    void (*pltHookRegister)(const char *, const char *, void *, void **);
-    void (*pltHookExclude)(const char *, const char *);
+    void (*pltHookRegister)(dev_t, ino_t, const char *, void *, void **);
+    bool (*exemptFd)(int);
     bool (*pltHookCommit)();
     int  (*connectCompanion)(void * /* impl */);
     void (*setOption)(void * /* impl */, Option);
@@ -360,14 +365,14 @@ inline void Api::setOption(Option opt) {
 inline uint32_t Api::getFlags() {
     return tbl->getFlags ? tbl->getFlags(tbl->impl) : 0;
 }
+inline bool Api::exemptFd(int fd) {
+    return tbl->exemptFd != nullptr && tbl->exemptFd(fd);
+}
 inline void Api::hookJniNativeMethods(JNIEnv *env, const char *className, JNINativeMethod *methods, int numMethods) {
     if (tbl->hookJniNativeMethods) tbl->hookJniNativeMethods(env, className, methods, numMethods);
 }
-inline void Api::pltHookRegister(const char *regex, const char *symbol, void *newFunc, void **oldFunc) {
-    if (tbl->pltHookRegister) tbl->pltHookRegister(regex, symbol, newFunc, oldFunc);
-}
-inline void Api::pltHookExclude(const char *regex, const char *symbol) {
-    if (tbl->pltHookExclude) tbl->pltHookExclude(regex, symbol);
+inline void Api::pltHookRegister(dev_t dev, ino_t inode, const char *symbol, void *newFunc, void **oldFunc) {
+    if (tbl->pltHookRegister) tbl->pltHookRegister(dev, inode, symbol, newFunc, oldFunc);
 }
 inline bool Api::pltHookCommit() {
     return tbl->pltHookCommit != nullptr && tbl->pltHookCommit();
