@@ -29,7 +29,9 @@ jobs:
             abi=$(basename "$(dirname "$f")")
             cp "$f" "out/buildtype_fix/zygisk/${abi}.so"
           done
-          cd out && zip -r ../buildtype_fix.zip buildtype_fix
+          cd out/buildtype_fix
+          zip -r ../../buildtype_fix.zip .
+          cd ../..
 
       - uses: actions/upload-artifact@v4
         with:
