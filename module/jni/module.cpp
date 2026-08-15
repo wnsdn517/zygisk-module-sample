@@ -1,6 +1,6 @@
 #include <android/log.h>
-#include <cstring>
-#include <cstdio>
+#include <string.h>
+#include <stdio.h>
 #include "zygisk.hpp"
 
 #define LOG_TAG "BuildTypeFix"
