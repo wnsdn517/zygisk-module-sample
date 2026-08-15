@@ -33,10 +33,16 @@ static void patch_build_type(JNIEnv *env) {
     if (!buildClass) { LOGD("Build class not found"); return; }
     jfieldID typeField = env->GetStaticFieldID(buildClass, "TYPE", "Ljava/lang/String;");
     if (!typeField) { LOGD("TYPE field not found"); return; }
+
     env->SetStaticObjectField(buildClass, typeField, env->NewStringUTF("user"));
     LOGD("Patched Build.TYPE -> user");
-}
 
+    // 즉시 재확인
+    jstring after = (jstring)env->GetStaticObjectField(buildClass, typeField);
+    const char *afterStr = env->GetStringUTFChars(after, nullptr);
+    LOGD("Readback right after write: %s", afterStr);
+    env->ReleaseStringUTFChars(after, afterStr);
+}
 class BuildTypeFixModule : public zygisk::ModuleBase {
 public:
     void onLoad(Api *api, JNIEnv *env) override { this->env = env; }
