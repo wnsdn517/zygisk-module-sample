@@ -1,0 +1,3 @@
+com.eltavine.duckdetector
+com.example.driftdebug.dev.debug
+kr.airport.android.smartpass
