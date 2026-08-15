@@ -1,11 +1,58 @@
 #include <jni.h>
 #include <string>
+#include <pthread.h>
+#include <unistd.h>
 #include "zygisk.hpp"
 #include "config.hpp"
 #include "patcher.hpp"
 
 using zygisk::Api;
 using zygisk::AppSpecializeArgs;
+
+struct WatcherArgs {
+    JavaVM *vm;
+};
+
+// patch 직후부터 30ms 간격으로 3초간 Build.TYPE 값을 읽어 logcat에 찍는다.
+// 값이 언제(몇 ms 시점에) 다시 바뀌는지 정확히 잡아내기 위한 진단용 스레드.
+static void *watchBuildType(void *argPtr) {
+    auto *args = (WatcherArgs *) argPtr;
+    JNIEnv *env = nullptr;
+    if (args->vm->AttachCurrentThread(&env, nullptr) != JNI_OK) {
+        delete args;
+        return nullptr;
+    }
+
+    jclass buildClass = env->FindClass("android/os/Build");
+    jfieldID fieldId = buildClass
+        ? env->GetStaticFieldID(buildClass, "TYPE", "Ljava/lang/String;")
+        : nullptr;
+
+    if (!fieldId) {
+        LOGE("[Watcher] Build.TYPE fieldId 획득 실패");
+    }
+
+    std::string lastSeen;
+    for (int i = 0; i < 3000 && fieldId; i++) {  // 3000 * 1ms = 3000ms
+        auto val = (jstring) env->GetStaticObjectField(buildClass, fieldId);
+        const char *cstr = val ? env->GetStringUTFChars(val, nullptr) : "(null)";
+        std::string current = cstr ? cstr : "(null)";
+
+        // 값이 바뀐 시점만 로그 (스팸 방지), 그래도 첫 값과 마지막 값은 항상 찍음
+        if (current != lastSeen || i == 0) {
+            LOGI("[Watcher] t=+%dms Build.TYPE=%s", i, current.c_str());
+            lastSeen = current;
+        }
+
+        if (val && cstr) env->ReleaseStringUTFChars(val, cstr);
+        if (val) env->DeleteLocalRef(val);
+        usleep(1000);  // 1ms
+    }
+
+    args->vm->DetachCurrentThread();
+    delete args;
+    return nullptr;
+}
 
 class BuildTypeFixModule : public zygisk::ModuleBase {
 public:
@@ -44,6 +91,14 @@ public:
         LOGI("[Zygisk] Applying patches in postAppSpecialize...");
         if (BuildPatcher::applyPatch(env, config)) {
             LOGI("[Zygisk] All requested build fields successfully patched.");
+
+            // 진단용: 3초간 값 변화 감시 스레드 기동
+            JavaVM *vm = nullptr;
+            env->GetJavaVM(&vm);
+            auto *args = new WatcherArgs{vm};
+            pthread_t tid;
+            pthread_create(&tid, nullptr, watchBuildType, args);
+            pthread_detach(tid);
         } else {
             LOGE("[Zygisk] Failed to apply build field patches!");
         }
