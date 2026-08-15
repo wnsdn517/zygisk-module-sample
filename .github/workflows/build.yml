@@ -1,0 +1,37 @@
+name: Build Zygisk Module
+
+on:
+  push:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - run: chmod +x gradlew
+
+      - run: ./gradlew :module:assembleRelease
+
+      - name: Package module zip
+        run: |
+          mkdir -p out/buildtype_fix/zygisk
+          cp module.prop out/buildtype_fix/module.prop
+          cp targets.txt out/buildtype_fix/targets.txt
+          find module/build -name "*.so" | while read f; do
+            abi=$(basename "$(dirname "$f")")
+            cp "$f" "out/buildtype_fix/zygisk/${abi}.so"
+          done
+          cd out && zip -r ../buildtype_fix.zip buildtype_fix
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: buildtype_fix-module
+          path: buildtype_fix.zip
