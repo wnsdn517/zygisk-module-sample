@@ -1,0 +1,6 @@
+id=buildtype_fix
+name=Build.TYPE Fixer
+version=v1
+versionCode=1
+author=you
+description=Patches android.os.Build.TYPE for listed packages
