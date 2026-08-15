@@ -1,0 +1,17 @@
+# 패치 활성화 여부 (1: 활성화, 0: 비활성화)
+ENABLE=1
+
+# Build.TYPE 변경값
+BUILD_TYPE=user
+
+# Build.TAGS 변경값
+BUILD_TAGS=release-keys
+
+# FINGERPRINT 처리 방식
+# - REPLACE_USERDEBUG : 기존 FINGERPRINT 문자열에서 'userdebug'만 'user'로 치환
+# - OVERRIDE          : 아래 BUILD_FP_OVERRIDE 값으로 전체 덮어쓰기
+# - DISABLED          : Fingerprint 패치 안함
+FP_MODE=REPLACE_USERDEBUG
+
+# FP_MODE=OVERRIDE 사용 시 덮어쓸 정식 Fingerprint 문자열
+BUILD_FP_OVERRIDE=google/redfin/redfin:12/SP1A.210812.016/7786013:user/release-keys
