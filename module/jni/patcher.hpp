@@ -30,15 +30,33 @@ private:
         jfieldID fieldId = env->GetStaticFieldID(buildClass, fieldName, "Ljava/lang/String;");
         if (!fieldId) {
             if (env->ExceptionCheck()) env->ExceptionClear();
+            LOGE("[Patcher] GetStaticFieldID FAILED for %s", fieldName);
             return;
         }
 
         jstring jVal = env->NewStringUTF(newValue.c_str());
-        
+
         env->SetStaticObjectField(buildClass, fieldId, jVal);
+
+        // write 도중 예외가 났는지 반드시 체크 (기존 코드엔 이게 없었음)
+        if (env->ExceptionCheck()) {
+            LOGE("[Patcher] SetStaticObjectField THREW for %s", fieldName);
+            env->ExceptionDescribe();
+            env->ExceptionClear();
+            env->DeleteLocalRef(jVal);
+            return;
+        }
         env->DeleteLocalRef(jVal);
 
-        LOGI("[Patcher] Force-assigned Build.%s = '%s'", fieldName, newValue.c_str());
+        // write 직후 즉시 같은 fieldId로 다시 읽어서 실제로 박혔는지 확인
+        jstring readBack = (jstring)env->GetStaticObjectField(buildClass, fieldId);
+        const char* rb = readBack ? env->GetStringUTFChars(readBack, nullptr) : nullptr;
+        LOGI("[Patcher] Force-assigned Build.%s = '%s' (read-back: '%s')",
+             fieldName, newValue.c_str(), rb ? rb : "(null)");
+        if (readBack) {
+            if (rb) env->ReleaseStringUTFChars(readBack, rb);
+            env->DeleteLocalRef(readBack);
+        }
     }
 
     static void patchFingerprintReplace(JNIEnv* env, jclass buildClass) {

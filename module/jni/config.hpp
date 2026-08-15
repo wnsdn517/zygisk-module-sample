@@ -82,8 +82,21 @@ public:
         std::string line;
         while (std::getline(file, line)) {
             trim(line);
-            if (!line.empty() && line[0] != '#' && line == processName) {
-                LOGI("[Match] Process matched target list: %s", processName.c_str());
+            if (line.empty() || line[0] == '#') continue;
+
+            // 1. 정확 일치 (메인 프로세스)
+            if (line == processName) {
+                LOGI("[Match] Process matched target list (exact): %s", processName.c_str());
+                return true;
+            }
+
+            // 2. "패키지명:서브프로세스" 형태 프리픽스 매칭
+            //    processName == "com.example.app:detector" 같은 케이스를
+            //    targets.txt에는 "com.example.app" 한 줄만 있어도 잡아줌
+            if (processName.size() > line.size() &&
+                processName.compare(0, line.size(), line) == 0 &&
+                processName[line.size()] == ':') {
+                LOGI("[Match] Process matched target list (subprocess): %s", processName.c_str());
                 return true;
             }
         }
