@@ -60,7 +60,7 @@ jobs:
           name=BuildType Fix Module
           version=${NEW_VERSION}
           versionCode=${NEW_CODE}
-          author=YourName
+          author=Rocky
           description=Dynamically patches Build fields and Fingerprint for target applications.
           updateJson=${UPDATE_URL}
           EOF
