@@ -3,11 +3,16 @@ name: Build Zygisk Module
 on:
   push:
     branches: [ master ]
+    tags:
+      - 'v*'
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
     steps:
       - uses: actions/checkout@v4
 
@@ -18,22 +23,60 @@ jobs:
 
       - run: chmod +x gradlew
 
-      - run: ./gradlew :module:assembleRelease
+      - name: Build with Gradle
+        run: ./gradlew :module:assembleRelease
 
-      - name: Package module zip
+      - name: Prepare module files & update module.prop
         run: |
           mkdir -p out/buildtype_fix/zygisk
-          cp module.prop out/buildtype_fix/module.prop
-          cp targets.txt out/buildtype_fix/targets.txt
+
+          # 1. module.prop 동적 생성/업데이트
+          VERSION_NAME="v1.0.${{ github.run_number }}"
+          VERSION_CODE="${{ github.run_number }}"
+          UPDATE_URL="https://raw.githubusercontent.com/${{ github.repository }}/master/update.json"
+
+          cat << EOF > out/buildtype_fix/module.prop
+          id=buildtype_fix
+          name=BuildType Fix Module
+          version=${VERSION_NAME}
+          versionCode=${VERSION_CODE}
+          author=YourName
+          description=Dynamically patches Build fields and Fingerprint for target applications.
+          updateJson=${UPDATE_URL}
+          EOF
+
+          # 2. 필수 파일 복사 (targets.txt, config.txt, customize.sh 등)
+          [ -f targets.txt ] && cp targets.txt out/buildtype_fix/targets.txt
+          [ -f config.txt ] && cp config.txt out/buildtype_fix/config.txt
+          [ -f customize.sh ] && cp customize.sh out/buildtype_fix/customize.sh
+
+          # 3. 빌드된 .so 파일 복사
           find module/build -name "*.so" | while read f; do
             abi=$(basename "$(dirname "$f")")
             cp "$f" "out/buildtype_fix/zygisk/${abi}.so"
           done
+
+          # 4. Magisk/KernelSU 플래시용 최종 ZIP 생성
           cd out/buildtype_fix
           zip -r ../../buildtype_fix.zip .
           cd ../..
 
-      - uses: actions/upload-artifact@v4
+      # Artifact 다운로드 시 이중 압축 방지를 위해 zip 내부 폴더 구조 자체를 지정
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
         with:
-          name: buildtype_fix-module
-          path: buildtype_fix.zip
+          name: buildtype_fix-${{ github.run_number }}
+          path: out/buildtype_fix/
+
+      # Release 태그(v*) 발행 또는 workflow_dispatch/master 푸시 시 Release 게시
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
+        with:
+          tag_name: ${{ github.ref_name || format('v1.0.{0}', github.run_number) }}
+          name: Release ${{ github.ref_name || format('v1.0.{0}', github.run_number) }}
+          files: buildtype_fix.zip
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
