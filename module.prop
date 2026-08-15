@@ -1,6 +1,7 @@
 id=buildtype_fix
 name=Build.TYPE Fixer
-version=v1
-versionCode=1
-author=you
+version=v1.0.100
+versionCode=100
+author=Rocky
 description=Patches android.os.Build.TYPE for listed packages
+updateJson=https://raw.githubusercontent.com/wnsdn517/zygisk-module-sample/master/update.json
