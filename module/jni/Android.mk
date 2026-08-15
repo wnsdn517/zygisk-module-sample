@@ -1,7 +1,10 @@
 LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
-LOCAL_MODULE := buildtypefix
+
+LOCAL_MODULE    := buildtypefix
 LOCAL_SRC_FILES := module.cpp
-LOCAL_LDLIBS := -llog -lstdc++
+LOCAL_CPPFLAGS  := -std=c++17 -Wall -Wextra
+LOCAL_LDLIBS    := -llog
+
 include $(BUILD_SHARED_LIBRARY)
