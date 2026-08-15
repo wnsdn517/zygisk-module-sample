@@ -1,0 +1,6 @@
+{
+  "version": "v1.0.100",
+  "versionCode": 100,
+  "zipUrl": "https://github.com/wnsdn517/zygisk-module-sample/releases/latest/download/buildtype_fix.zip",
+  "changelog": "https://raw.githubusercontent.com/wnsdn517/zygisk-module-sample/master/changelog.md"
+}
