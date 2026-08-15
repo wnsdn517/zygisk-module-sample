@@ -1,63 +1,59 @@
-#include <android/log.h>
-#include <string.h>
-#include <stdio.h>
+#include <jni.h>
+#include <string>
 #include "zygisk.hpp"
-
-#define LOG_TAG "BuildTypeFix"
-#define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__)
+#include "config.hpp"
+#include "patcher.hpp"
 
 using zygisk::Api;
 using zygisk::AppSpecializeArgs;
 
-static bool should_patch(JNIEnv *env, jstring nice_name) {
-    if (!nice_name) return false;
-    const char *name = env->GetStringUTFChars(nice_name, nullptr);
-    bool match = false;
-
-    FILE *f = fopen("/data/adb/modules/buildtype_fix/targets.txt", "r");
-    if (f) {
-        char line[256];
-        while (fgets(line, sizeof(line), f)) {
-            size_t len = strlen(line);
-            while (len > 0 && (line[len-1]=='\n' || line[len-1]=='\r')) line[--len]='\0';
-            if (len > 0 && strcmp(line, name) == 0) { match = true; break; }
-        }
-        fclose(f);
-    }
-    env->ReleaseStringUTFChars(nice_name, name);
-    return match;
-}
-
-static void patch_build_type(JNIEnv *env) {
-    jclass buildClass = env->FindClass("android/os/Build");
-    if (!buildClass) { LOGD("Build class not found"); return; }
-    jfieldID typeField = env->GetStaticFieldID(buildClass, "TYPE", "Ljava/lang/String;");
-    if (!typeField) { LOGD("TYPE field not found"); return; }
-
-    env->SetStaticObjectField(buildClass, typeField, env->NewStringUTF("user"));
-    LOGD("Patched Build.TYPE -> user");
-
-    // 즉시 재확인
-    jstring after = (jstring)env->GetStaticObjectField(buildClass, typeField);
-    const char *afterStr = env->GetStringUTFChars(after, nullptr);
-    LOGD("Readback right after write: %s", afterStr);
-    env->ReleaseStringUTFChars(after, afterStr);
-}
 class BuildTypeFixModule : public zygisk::ModuleBase {
 public:
-    void onLoad(Api *api, JNIEnv *env) override { this->env = env; }
+    void onLoad(Api *api, JNIEnv *env) override {
+        this->api = api;
+        this->env = env;
+    }
 
     void preAppSpecialize(AppSpecializeArgs *args) override {
-        do_patch = should_patch(env, args->nice_name);
+        if (!args || !args->nice_name) {
+            do_patch = false;
+            return;
+        }
+
+        const char *niceNameCStr = env->GetStringUTFChars(args->nice_name, nullptr);
+        std::string processName = niceNameCStr ? niceNameCStr : "";
+        if (niceNameCStr) {
+            env->ReleaseStringUTFChars(args->nice_name, niceNameCStr);
+        }
+
+        // 1. Target Matching
+        if (ConfigManager::isTargetProcess(processName)) {
+            do_patch = true;
+            // 2. Load Config for Matched Process
+            config = ConfigManager::loadConfig();
+            LOGI("[Zygisk] Target process initialized: %s", processName.c_str());
+        } else {
+            do_patch = false;
+        }
     }
 
     void postAppSpecialize(const AppSpecializeArgs *args) override {
-        if (do_patch) patch_build_type(env);
+        if (!do_patch) return;
+
+        // 3. Execute Patching
+        LOGI("[Zygisk] Applying patches in postAppSpecialize...");
+        if (BuildPatcher::applyPatch(env, config)) {
+            LOGI("[Zygisk] All requested build fields successfully patched.");
+        } else {
+            LOGE("[Zygisk] Failed to apply build field patches!");
+        }
     }
 
 private:
-    JNIEnv *env;
+    Api *api = nullptr;
+    JNIEnv *env = nullptr;
     bool do_patch = false;
+    ModuleConfig config;
 };
 
 REGISTER_ZYGISK_MODULE(BuildTypeFixModule)
