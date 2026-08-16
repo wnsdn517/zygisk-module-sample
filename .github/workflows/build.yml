@@ -26,21 +26,32 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew :module:assembleRelease
 
-      - name: Update versionCode & prepare files
+      - name: Determine next version from existing Releases
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # 1. 기존 update.json에서 versionCode 읽기 (없거나 오류 시 기본값 100)
-          if [ -f update.json ]; then
-            CURRENT_CODE=$(jq -r '.versionCode // 100' update.json)
+          # git에 아무것도 커밋하지 않는다. 버전 번호는 GitHub Releases 목록에서
+          # 직접 조회해서 결정한다 (repo state와 완전히 분리 -> 동기화 충돌 원천 차단).
+          LATEST_TAG=$(gh release list --limit 1 --json tagName -q '.[0].tagName' 2>/dev/null || echo "")
+          if [[ "$LATEST_TAG" =~ ^v1\.0\.([0-9]+)$ ]]; then
+            CURRENT_CODE="${BASH_REMATCH[1]}"
           else
             CURRENT_CODE=100
           fi
-
           NEW_CODE=$((CURRENT_CODE + 1))
           NEW_VERSION="v1.0.${NEW_CODE}"
+          echo "NEW_VERSION=${NEW_VERSION}" >> $GITHUB_ENV
+          echo "NEW_CODE=${NEW_CODE}" >> $GITHUB_ENV
+
+      - name: Prepare module files
+        run: |
           ZIP_URL="https://github.com/${{ github.repository }}/releases/latest/download/buildtype_fix.zip"
           CHANGELOG_URL="https://raw.githubusercontent.com/${{ github.repository }}/master/changelog.md"
+          UPDATE_URL="https://github.com/${{ github.repository }}/releases/latest/download/update.json"
 
-          # 2. update.json 자동 갱신
+          mkdir -p out/buildtype_fix/zygisk
+
+          # update.json은 repo에 커밋하지 않고 Release 첨부파일로만 배포한다.
           cat << EOF > update.json
           {
             "version": "${NEW_VERSION}",
@@ -49,11 +60,7 @@ jobs:
             "changelog": "${CHANGELOG_URL}"
           }
           EOF
-
-          # 3. out/buildtype_fix 디렉터리 생성 및 module.prop 작성
-          mkdir -p out/buildtype_fix/zygisk
-
-          UPDATE_URL="https://raw.githubusercontent.com/${{ github.repository }}/master/update.json"
+          cp update.json out/buildtype_fix/update.json
 
           cat << EOF > out/buildtype_fix/module.prop
           id=buildtype_fix
@@ -65,50 +72,34 @@ jobs:
           updateJson=${UPDATE_URL}
           EOF
 
-          # 4. 기타 필수 파일 복사
           [ -f targets.txt ] && cp targets.txt out/buildtype_fix/targets.txt
           [ -f config.txt ] && cp config.txt out/buildtype_fix/config.txt
           [ -f customize.sh ] && cp customize.sh out/buildtype_fix/customize.sh
           [ -d webroot ] && cp -r webroot out/buildtype_fix/webroot
 
-          # 5. 빌드된 .so 파일 복사
           find module/build -name "*.so" | while read f; do
             abi=$(basename "$(dirname "$f")")
             cp "$f" "out/buildtype_fix/zygisk/${abi}.so"
           done
 
-          # 6. 모듈 ZIP 패키징
           cd out/buildtype_fix
           zip -r ../../buildtype_fix.zip .
           cd ../..
 
-          # 환경 변수 전달 (Release 및 Commit용)
-          echo "NEW_VERSION=${NEW_VERSION}" >> $GITHUB_ENV
-          echo "NEW_CODE=${NEW_CODE}" >> $GITHUB_ENV
-
-      # 7. 변경된 update.json 저장소에 자동 커밋 & 푸시
-      - name: Commit updated update.json
-        run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          git add update.json
-          git commit -m "chore: bump versionCode to ${NEW_CODE} [skip ci]" || echo "No changes to commit"
-          git push
-
-      # 8. 이중 압축 방지 Artifact 업로드
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: buildtype_fix-${{ env.NEW_VERSION }}
           path: out/buildtype_fix/
 
-      # 9. GitHub Release 생성 및 최신 ZIP 파일 업데이트
       - name: Create or Update GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.NEW_VERSION }}
           name: Release ${{ env.NEW_VERSION }}
-          files: buildtype_fix.zip
+          files: |
+            buildtype_fix.zip
+            update.json
           draft: false
           prerelease: false
         env:

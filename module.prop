@@ -4,4 +4,4 @@ version=v1.0.100
 versionCode=100
 author=Rocky
 description=Patches android.os.Build.TYPE for listed packages
-updateJson=https://raw.githubusercontent.com/wnsdn517/zygisk-module-sample/master/update.json
+updateJson=https://github.com/wnsdn517/zygisk-module-sample/releases/latest/download/update.json
