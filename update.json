@@ -1,6 +1,6 @@
 {
-  "version": "v1.0.104",
-  "versionCode": 104,
+  "version": "v1.0.105",
+  "versionCode": 105,
   "zipUrl": "https://github.com/wnsdn517/zygisk-module-sample/releases/latest/download/buildtype_fix.zip",
   "changelog": "https://raw.githubusercontent.com/wnsdn517/zygisk-module-sample/master/changelog.md"
 }
