@@ -89,29 +89,56 @@ public:
             return false;
         }
 
+        std::vector<std::string> excludes;
+        std::vector<std::string> includes;
+
         std::string line;
         while (std::getline(file, line)) {
             trim(line);
             if (line.empty() || line[0] == '#') continue;
 
-            // 1. 정확 일치 (메인 프로세스)
-            if (line == processName) {
-                LOGI("[Match] Process matched target list (exact): %s", processName.c_str());
-                return true;
+            if (line[0] == '!') {
+                std::string ex = line.substr(1);
+                trim(ex);
+                if (!ex.empty()) excludes.push_back(ex);
+            } else {
+                includes.push_back(line);
             }
+        }
 
-            // 2. "패키지명:서브프로세스" 형태 프리픽스 매칭
-            //    processName == "com.example.app:detector" 같은 케이스를
-            //    targets.txt에는 "com.example.app" 한 줄만 있어도 잡아줌
-            if (processName.size() > line.size() &&
-                processName.compare(0, line.size(), line) == 0 &&
-                processName[line.size()] == ':') {
-                LOGI("[Match] Process matched target list (subprocess): %s", processName.c_str());
+        // 제외 규칙이 하나라도 걸리면 포함 목록과 무관하게 무조건 제외.
+        // "패키지명 전체는 타겟인데 특정 서브프로세스 하나만 빼고 싶다" 같은 경우에 사용.
+        for (const auto& ex : excludes) {
+            if (matchesPattern(ex, processName)) {
+                LOGI("[Match] Process excluded: %s (rule: !%s)", processName.c_str(), ex.c_str());
+                return false;
+            }
+        }
+
+        for (const auto& inc : includes) {
+            if (matchesPattern(inc, processName)) {
+                LOGI("[Match] Process matched target list: %s (rule: %s)", processName.c_str(), inc.c_str());
                 return true;
             }
         }
         return false;
     }
+
+private:
+    // pattern이 "com.example.app" 형태면 정확 일치 또는 "com.example.app:서브프로세스"
+    // 프리픽스까지 매칭. pattern에 이미 ":"가 포함돼 있으면(특정 서브프로세스 지정) 정확 일치만.
+    static bool matchesPattern(const std::string& pattern, const std::string& processName) {
+        if (pattern == processName) return true;
+        if (pattern.find(':') != std::string::npos) return false; // 특정 서브프로세스 지정은 정확 일치만 허용
+        if (processName.size() > pattern.size() &&
+            processName.compare(0, pattern.size(), pattern) == 0 &&
+            processName[pattern.size()] == ':') {
+            return true;
+        }
+        return false;
+    }
+
+public:
 
 private:
     static void trim(std::string& s) {

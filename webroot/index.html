@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -11,11 +11,11 @@
     --green: #3ecf8e; --red: #f0605c; --yellow: #e0b341; --pink: #e876b8;
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  body { margin: 0; background: var(--bg); color: var(--text); font-family: -apple-system, Roboto, "Segoe UI", sans-serif; padding-bottom: 40px; -webkit-font-smoothing: antialiased; }
+  body { margin: 0; background: var(--bg); color: var(--text); font-family: -apple-system, Roboto, "Segoe UI", sans-serif; padding-bottom: 78px; -webkit-font-smoothing: antialiased; }
 
-  header { padding: 18px 16px 8px; position: sticky; top: 0; background: var(--bg); z-index: 10; }
+  header { padding: 16px; }
   .titleRow { display: flex; align-items: center; justify-content: space-between; }
-  h1 { font-size: 18px; margin: 0; font-weight: 700; }
+  h1 { font-size: 17px; margin: 0; font-weight: 700; }
   .sub { color: var(--sub); font-size: 12px; margin-top: 3px; }
 
   .switch { position: relative; width: 44px; height: 25px; flex-shrink: 0; }
@@ -27,11 +27,9 @@
   .switch.big { width: 50px; height: 28px; }
   .switch.big .slider::before { width: 22px; height: 22px; }
   .switch.big input:checked + .slider::before { transform: translateX(22px); }
-
-  .tabs { display: flex; gap: 6px; padding: 12px 16px 10px; position: sticky; top: 52px; background: var(--bg); z-index: 9; overflow-x: auto; scrollbar-width: none; }
-  .tabs::-webkit-scrollbar { display: none; }
-  .tab { flex-shrink: 0; padding: 8px 14px; border-radius: 999px; background: var(--card); border: 1px solid var(--border); font-size: 12.5px; color: var(--sub); white-space: nowrap; }
-  .tab.active { color: #fff; border-color: var(--accent); background: var(--accent); }
+  .switch.small { width: 36px; height: 20px; }
+  .switch.small .slider::before { width: 14px; height: 14px; }
+  .switch.small input:checked + .slider::before { transform: translateX(16px); }
 
   main { padding: 0 16px; }
   .page { display: none; }
@@ -61,6 +59,7 @@
   .btn-row { display: flex; gap: 8px; }
   .btn-row button { flex: 1; }
   .btn-small { padding: 8px 12px; font-size: 12px; width: auto; }
+  .btn-icon { padding: 6px 8px; width: auto; background: transparent; color: var(--sub); }
 
   .fpPreview { background: #0a0c0f; border: 1px dashed var(--border); border-radius: 10px; padding: 10px; font-size: 11px; font-family: ui-monospace, monospace; word-break: break-all; color: var(--sub); margin-top: 8px; }
   .fpPreview b { color: var(--green); font-weight: 600; }
@@ -73,19 +72,18 @@
   .listRow .main { flex: 1; min-width: 0; }
   .listRow .label { font-weight: 500; font-size: 14px; margin-bottom: 2px; }
   .listRow .pkg { color: var(--sub); font-size: 12px; font-family: ui-monospace, monospace; word-break: break-all; }
-  .listRow.dim { opacity: .4; }
-  .listRow input[type=checkbox] { width: 19px; height: 19px; accent-color: var(--accent); flex-shrink: 0; }
+  .listRow input[type=checkbox] { width: 20px; height: 20px; accent-color: var(--accent); flex-shrink: 0; }
   .tag { font-size: 10px; color: var(--sub); border: 1px solid var(--border); border-radius: 6px; padding: 2px 6px; flex-shrink: 0; }
+  .chevron { color: var(--sub); flex-shrink: 0; }
   .emptyState { padding: 28px 14px; text-align: center; color: var(--sub); font-size: 13px; line-height: 1.6; }
 
   .propRow { padding: 12px; border-bottom: 1px solid var(--border); }
   .propRow:last-child { border-bottom: none; }
   .propRow .propTop { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+  .propRow .propMain { flex: 1; min-width: 0; cursor: text; }
   .propRow .propKey { font-family: ui-monospace, monospace; font-size: 12.5px; color: var(--text); word-break: break-all; line-height: 1.4; }
   .propRow .propValue { font-family: ui-monospace, monospace; font-size: 12px; color: var(--sub); word-break: break-all; margin-top: 4px; line-height: 1.4; }
   .propRow .propValue.empty { font-style: italic; opacity: .6; }
-  .propRow button { flex-shrink: 0; }
-  .propRow .propActions { display: flex; gap: 6px; flex-shrink: 0; }
   .propRow .propEditInput { width: 100%; margin-top: 6px; }
   .propRow .propEditRow { display: flex; gap: 6px; margin-top: 8px; }
   .propRow .propEditRow button { flex: 1; }
@@ -104,7 +102,7 @@
   .spinner { width: 13px; height: 13px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin .7s linear infinite; flex-shrink: 0; }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  pre.logbox { background: #0a0c0f; border: 1px solid var(--border); border-radius: 12px; padding: 10px; font-size: 11px; line-height: 1.55; overflow-x: auto; white-space: pre-wrap; word-break: break-all; max-height: 50vh; overflow-y: auto; margin: 0; }
+  pre.logbox { background: #0a0c0f; border: 1px solid var(--border); border-radius: 12px; padding: 10px; font-size: 11px; line-height: 1.55; overflow-x: auto; white-space: pre-wrap; word-break: break-all; max-height: 55vh; overflow-y: auto; margin: 0; }
   .l-watcher { color: var(--yellow); }
   .l-hook { color: var(--pink); }
   .l-patch { color: var(--green); }
@@ -114,12 +112,51 @@
   .toolbar select { flex: 1; min-width: 90px; margin-top: 0; }
   .toolbar button { width: auto; padding: 9px 12px; flex-shrink: 0; }
 
-  .toast-box { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #22262e; border: 1px solid var(--border); color: var(--text); padding: 10px 18px; border-radius: 999px; font-size: 13px; opacity: 0; transition: opacity .2s; pointer-events: none; z-index: 100; max-width: 88vw; text-align: center; }
+  .toast-box { position: fixed; bottom: 88px; left: 50%; transform: translateX(-50%); background: #22262e; border: 1px solid var(--border); color: var(--text); padding: 10px 18px; border-radius: 999px; font-size: 13px; opacity: 0; transition: opacity .2s; pointer-events: none; z-index: 100; max-width: 88vw; text-align: center; }
   .toast-box.show { opacity: 1; }
   .savedTick { font-size: 11px; color: var(--green); opacity: 0; transition: opacity .3s; }
   .savedTick.show { opacity: 1; }
 
-  .badge-warn { display: inline-block; font-size: 11px; color: var(--yellow); background: #2a2416; border: 1px solid #453a1f; border-radius: 8px; padding: 6px 10px; margin-top: 8px; }
+  .bottomNav {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
+    display: flex; background: #12141a; border-top: 1px solid var(--border);
+    padding: 6px 6px calc(6px + env(safe-area-inset-bottom, 0px));
+  }
+  .navItem {
+    flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 3px; padding: 7px 4px; border-radius: 12px; background: transparent; color: var(--sub);
+  }
+  .navItem svg { width: 22px; height: 22px; }
+  .navItem .navLabel { font-size: 0; max-height: 0; opacity: 0; transition: font-size .15s, opacity .15s; font-weight: 600; }
+  .navItem.active { color: var(--accent); background: #1a2333; }
+  .navItem.active .navLabel { font-size: 10px; max-height: 12px; opacity: 1; }
+
+  .sheetBackdrop {
+    position: fixed; inset: 0; background: rgba(0,0,0,.55); z-index: 60;
+    opacity: 0; pointer-events: none; transition: opacity .2s;
+  }
+  .sheetBackdrop.open { opacity: 1; pointer-events: auto; }
+  .sheet {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 61;
+    background: var(--card); border-top: 1px solid var(--border);
+    border-radius: 18px 18px 0 0; padding: 16px 16px calc(16px + env(safe-area-inset-bottom, 0px));
+    max-height: 80vh; overflow-y: auto;
+    transform: translateY(100%); transition: transform .22s ease;
+  }
+  .sheet.open { transform: translateY(0); }
+  .sheetHandle { width: 36px; height: 4px; background: var(--border); border-radius: 999px; margin: 0 auto 14px; }
+  .sheetTitle { font-size: 15px; font-weight: 700; word-break: break-all; }
+  .sheetSubtitle { font-size: 12px; color: var(--sub); margin-top: 2px; font-family: ui-monospace, monospace; word-break: break-all; }
+  .sheetSection { margin-top: 16px; }
+  .sheetSection h3 { font-size: 11.5px; color: var(--sub); text-transform: uppercase; letter-spacing: .03em; margin: 0 0 8px; font-weight: 600; }
+  .ruleRow { display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: #0a0c0f; border: 1px solid var(--border); border-radius: 10px; margin-bottom: 6px; font-size: 12px; font-family: ui-monospace, monospace; }
+  .ruleRow .ruleType { flex-shrink: 0; font-size: 10px; font-family: -apple-system, sans-serif; font-weight: 700; padding: 2px 6px; border-radius: 6px; }
+  .ruleRow .ruleType.include { background: #14311f; color: var(--green); }
+  .ruleRow .ruleType.exclude { background: #3a1f1f; color: var(--red); }
+  .ruleRow .ruleText { flex: 1; word-break: break-all; }
+  .addRuleRow { display: flex; gap: 6px; margin-top: 8px; }
+  .addRuleRow input { flex: 1; margin-top: 0; }
+  .addRuleRow button { width: auto; flex-shrink: 0; }
 </style>
 </head>
 <body>
@@ -128,7 +165,7 @@
   <div class="titleRow">
     <div>
       <h1>BuildType Fix</h1>
-      <div class="sub" id="headerSummary">불러오는 중...</div>
+      <div class="sub" id="headerSummary">Loading...</div>
     </div>
     <label class="switch big">
       <input type="checkbox" id="masterToggle">
@@ -137,104 +174,123 @@
   </div>
 </header>
 
-<div class="tabs">
-  <div class="tab active" data-page="config">설정</div>
-  <div class="tab" data-page="targets">타겟</div>
-  <div class="tab" data-page="props">프로퍼티</div>
-  <div class="tab" data-page="test">테스트</div>
-  <div class="tab" data-page="logs">로그</div>
-</div>
-
 <main>
 
-  <!-- 설정 -->
-  <section class="page active" id="page-config">
+  <section class="page active" id="page-status">
     <div class="card">
-      <h2>Build.TYPE</h2>
-      <div class="row">
-        <label>패치 사용</label>
-        <label class="switch"><input type="checkbox" id="cfgPatchType"><span class="slider"></span></label>
-      </div>
-      <div class="row col">
-        <label>값</label>
-        <input type="text" id="cfgBuildType" placeholder="user">
-      </div>
+      <h2>Fingerprint Preview</h2>
+      <div class="fpPreview" id="fpPreview">Loading...</div>
     </div>
 
     <div class="card">
-      <h2>Build.TAGS</h2>
-      <div class="row">
-        <label>패치 사용</label>
-        <label class="switch"><input type="checkbox" id="cfgPatchTags"><span class="slider"></span></label>
-      </div>
+      <h2>Quick Test</h2>
+      <div class="desc">Force-stop and relaunch a target app, then check the patch log right away.</div>
       <div class="row col">
-        <label>값</label>
-        <input type="text" id="cfgBuildTags" placeholder="release-keys">
+        <label>Package</label>
+        <select id="testTargetSelect"><option value="">Pick from targets...</option></select>
+        <input type="text" id="testTargetInput" placeholder="or type a package name" style="margin-top: 8px;">
+      </div>
+      <button class="btn-primary" id="btnRunTest" style="margin-top: 12px;">Run Test</button>
+      <div class="statusText" id="testStatus"></div>
+    </div>
+    <div class="card" id="testResultCard" style="display: none;">
+      <h2>Result</h2>
+      <pre class="logbox" id="testlog"></pre>
+    </div>
+  </section>
+
+  <section class="page" id="page-targets">
+    <div class="card" id="targetsExpertCard" style="display:none;">
+      <h2>targets.txt (raw)</h2>
+      <div class="desc">One rule per line. Exact package, "pkg:subprocess", or prefix "!" to exclude. Autosaves as you type.</div>
+      <textarea id="targetsRawBox" spellcheck="false"></textarea>
+    </div>
+
+    <div class="card" id="targetsPickerCard">
+      <h2>Installed Apps</h2>
+      <div class="searchBox">
+        <input type="text" id="appSearch" placeholder="Search by app name or package">
+        <button class="btn-ghost btn-small" id="btnToggleSystem">System apps</button>
+      </div>
+      <div class="statusText" id="appListStatus"></div>
+      <div class="desc" style="margin: 0 0 8px;">Tap the checkbox to target/untarget instantly. Tap the row to fine-tune subprocesses.</div>
+      <div class="list" id="appList"></div>
+    </div>
+  </section>
+
+  <section class="page" id="page-config">
+    <div class="card">
+      <div class="row">
+        <div>
+          <label>Expert Mode</label>
+          <div class="hint">Edit config.txt / targets.txt directly as raw text</div>
+        </div>
+        <label class="switch"><input type="checkbox" id="expertModeToggle"><span class="slider"></span></label>
       </div>
     </div>
 
-    <div class="card">
-      <h2>Fingerprint</h2>
-      <div class="desc">AUTO면 위 TYPE/TAGS 설정에 맞춰 fingerprint의 해당 부분만 자동 재구성합니다.</div>
-      <div class="row col">
-        <label>모드</label>
-        <select id="cfgFpMode">
-          <option value="AUTO">AUTO (자동 재구성)</option>
-          <option value="OVERRIDE">OVERRIDE (수동 지정)</option>
-          <option value="DISABLED">DISABLED (안 건드림)</option>
-        </select>
-      </div>
-      <div class="row col" id="fpOverrideRow">
-        <label>수동 값</label>
-        <input type="text" id="cfgFpOverride" placeholder="samsung/.../...:user/release-keys">
-      </div>
-      <div class="fpPreview" id="fpPreview">불러오는 중...</div>
+    <div class="card" id="configExpertCard" style="display:none;">
+      <h2>config.txt (raw)</h2>
+      <div class="desc">Autosaves as you type.</div>
+      <textarea id="configRawBox" spellcheck="false"></textarea>
     </div>
 
-    <div class="card">
-      <h2>테스트 모드</h2>
-      <div class="desc">켜면 필드가 다시 원래대로 바뀌는지 추적하는 진단 로그(Watcher/NativeHook)가 추가로 남습니다. 문제를 조사할 때만 켜고, 평소엔 꺼두는 걸 권장합니다 (약간의 오버헤드 있음).</div>
-      <div class="row">
-        <label>디버그 로그</label>
-        <label class="switch"><input type="checkbox" id="cfgDebugMode"><span class="slider"></span></label>
+    <div id="configFormCards">
+      <div class="card">
+        <h2>Build.TYPE</h2>
+        <div class="row">
+          <label>Patch enabled</label>
+          <label class="switch"><input type="checkbox" id="cfgPatchType"><span class="slider"></span></label>
+        </div>
+        <div class="row col">
+          <label>Value</label>
+          <input type="text" id="cfgBuildType" placeholder="user">
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Build.TAGS</h2>
+        <div class="row">
+          <label>Patch enabled</label>
+          <label class="switch"><input type="checkbox" id="cfgPatchTags"><span class="slider"></span></label>
+        </div>
+        <div class="row col">
+          <label>Value</label>
+          <input type="text" id="cfgBuildTags" placeholder="release-keys">
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Fingerprint</h2>
+        <div class="desc">AUTO rebuilds just the TYPE/TAGS segment of the fingerprint to match the settings above.</div>
+        <div class="row col">
+          <label>Mode</label>
+          <select id="cfgFpMode">
+            <option value="AUTO">AUTO (rebuild automatically)</option>
+            <option value="OVERRIDE">OVERRIDE (set manually)</option>
+            <option value="DISABLED">DISABLED (leave untouched)</option>
+          </select>
+        </div>
+        <div class="row col" id="fpOverrideRow">
+          <label>Manual value</label>
+          <input type="text" id="cfgFpOverride" placeholder="samsung/.../...:user/release-keys">
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Debug Logging</h2>
+        <div class="desc">Adds Watcher/NativeHook diagnostic logs that trace whether a field gets reverted after patching. Leave off for normal use -- only turn this on while investigating an issue.</div>
+        <div class="row">
+          <label>Enabled</label>
+          <label class="switch"><input type="checkbox" id="cfgDebugMode"><span class="slider"></span></label>
+        </div>
       </div>
     </div>
 
     <div class="row" style="justify-content: flex-end; padding-top: 0;">
-      <span class="savedTick" id="savedTick">✓ 저장됨</span>
-    </div>
-  </section>
-
-  <!-- 타겟 -->
-  <section class="page" id="page-targets">
-    <div class="card">
-      <h2>설치된 앱에서 선택</h2>
-      <div class="searchBox">
-        <input type="text" id="appSearch" placeholder="앱 이름 또는 패키지명 검색">
-        <button class="btn-ghost btn-small" id="btnToggleSystem">시스템앱</button>
-      </div>
-      <div class="statusText" id="appListStatus"></div>
-      <div class="list" id="appList"></div>
-      <div class="btn-row" style="margin-top: 10px;">
-        <button class="btn-primary" id="btnAddSelected">선택한 앱 타겟에 추가</button>
-      </div>
+      <span class="savedTick" id="savedTick">Saved</span>
     </div>
 
-    <div class="card">
-      <details>
-        <summary>고급: targets.txt 직접 편집 (서브프로세스 지정 등)</summary>
-        <div class="desc" style="margin-top: 8px;">한 줄에 패키지명 하나. #으로 시작하면 주석. "pkg:subprocess" 형태로 서브프로세스도 지정 가능.</div>
-        <textarea id="targetsBox" spellcheck="false"></textarea>
-        <div class="btn-row" style="margin-top: 10px;">
-          <button class="btn-ghost" id="btnReloadTargets">새로고침</button>
-          <button class="btn-primary" id="btnSaveTargets">저장</button>
-        </div>
-      </details>
-    </div>
-  </section>
-
-  <!-- Properties -->
-  <section class="page" id="page-props">
     <div class="card">
       <h2>System Properties</h2>
       <div class="searchBox">
@@ -252,60 +308,80 @@
 
     <div class="card">
       <h2>Remove on Boot</h2>
-      <div class="desc">Deleted automatically on reboot. One entry per line: an exact property name, or a *substring* pattern that deletes every matching key.</div>
+      <div class="desc">Deleted automatically on reboot, and applied immediately as you edit this list. Exact property name, or a *substring* pattern that matches multiple keys.</div>
       <textarea id="removePropsBox" spellcheck="false" placeholder="ro.lineage.version&#10;*lineage*"></textarea>
-      <div class="btn-row" style="margin-top: 10px;">
-        <button class="btn-ghost" id="btnReloadRemoveProps">Reload</button>
-        <button class="btn-primary" id="btnSaveRemoveProps">Save</button>
-      </div>
-      <div class="btn-row" style="margin-top: 8px;">
-        <button class="btn-danger" id="btnApplyRemoveNow">Apply now (don't wait for reboot)</button>
-      </div>
       <div class="statusText" id="removePropsStatus"></div>
     </div>
   </section>
 
-  <!-- 테스트 -->
-  <section class="page" id="page-test">
-    <div class="card">
-      <h2>지금 테스트</h2>
-      <div class="desc">타겟 앱을 강제종료 후 재실행해서 패치 로그를 바로 확인합니다.</div>
-      <div class="row col">
-        <label>테스트할 패키지</label>
-        <select id="testTargetSelect"><option value="">targets.txt에서 선택...</option></select>
-        <input type="text" id="testTargetInput" placeholder="또는 패키지명 직접 입력" style="margin-top: 8px;">
-      </div>
-      <button class="btn-primary" id="btnRunTest" style="margin-top: 12px;">테스트 실행</button>
-      <div class="statusText" id="testStatus"></div>
-    </div>
-    <div class="card" id="testResultCard" style="display: none;">
-      <h2>결과</h2>
-      <pre class="logbox" id="testlog"></pre>
-    </div>
-  </section>
-
-  <!-- 로그 -->
-  <section class="page" id="page-logs">
+  <section class="page" id="page-log">
     <div class="card">
       <div class="toolbar">
         <select id="logFilter">
-          <option value="all">전체</option>
-          <option value="watcher">Watcher (테스트 모드)</option>
-          <option value="hook">NativeHook (테스트 모드)</option>
+          <option value="all">All</option>
+          <option value="watcher">Watcher (debug mode)</option>
+          <option value="hook">NativeHook (debug mode)</option>
           <option value="patch">Patcher</option>
         </select>
-        <button class="btn-ghost btn-small" id="btnClearLog">지우기</button>
-        <button class="btn-primary btn-small" id="btnRefreshLog">새로고침</button>
+        <button class="btn-ghost btn-small" id="btnClearLog">Clear</button>
+        <button class="btn-primary btn-small" id="btnRefreshLog">Reload</button>
       </div>
       <div class="row" style="border: none; padding: 0 0 10px;">
-        <label style="font-size: 13px;">자동 새로고침 (2초)</label>
+        <label style="font-size: 13px;">Auto-refresh (2s)</label>
         <label class="switch"><input type="checkbox" id="autoRefresh"><span class="slider"></span></label>
       </div>
-      <pre class="logbox" id="logbox">새로고침을 눌러 로그를 불러오세요.</pre>
+      <pre class="logbox" id="logbox">Tap Reload to load logs.</pre>
     </div>
   </section>
 
 </main>
+
+<nav class="bottomNav">
+  <button class="navItem active" data-page="status">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    <span class="navLabel">Status</span>
+  </button>
+  <button class="navItem" data-page="targets">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+    <span class="navLabel">Targets</span>
+  </button>
+  <button class="navItem" data-page="config">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+    <span class="navLabel">Config</span>
+  </button>
+  <button class="navItem" data-page="log">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+    <span class="navLabel">Log</span>
+  </button>
+</nav>
+
+<div class="sheetBackdrop" id="sheetBackdrop"></div>
+<div class="sheet" id="pkgSheet">
+  <div class="sheetHandle"></div>
+  <div class="sheetTitle" id="sheetLabel">App name</div>
+  <div class="sheetSubtitle" id="sheetPkg">com.example.app</div>
+
+  <div class="sheetSection">
+    <div class="row" style="border:none; padding-top: 10px;">
+      <label>Target this app</label>
+      <label class="switch"><input type="checkbox" id="sheetBaseToggle"><span class="slider"></span></label>
+    </div>
+  </div>
+
+  <div class="sheetSection">
+    <h3>Subprocess rules</h3>
+    <div id="sheetRuleList"></div>
+    <div class="addRuleRow">
+      <input type="text" id="sheetNewSub" placeholder="subprocess name, e.g. detector">
+    </div>
+    <div class="btn-row" style="margin-top: 8px;">
+      <button class="btn-ghost btn-small" id="sheetAddInclude" style="flex:1;">Include only this</button>
+      <button class="btn-danger btn-small" id="sheetAddExclude" style="flex:1;">Exclude this</button>
+    </div>
+  </div>
+
+  <button class="btn-ghost" id="sheetClose" style="margin-top: 18px;">Close</button>
+</div>
 
 <div class="toast-box" id="toastBox"></div>
 
@@ -331,7 +407,6 @@ function flashSaved() {
   setTimeout(() => t.classList.remove('show'), 1200);
 }
 function escapeHtml(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
-// Wrap a string as a single-quoted POSIX shell argument, escaping embedded quotes safely.
 function shQuote(s) { return "'" + String(s).replace(/'/g, "'\\''") + "'"; }
 
 async function safeExec(cmd) {
@@ -343,22 +418,35 @@ async function safeExec(cmd) {
   }
 }
 
-// ---------- 탭 ----------
-document.querySelectorAll('.tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+document.querySelectorAll('.navItem').forEach(item => {
+  item.addEventListener('click', () => {
+    document.querySelectorAll('.navItem').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    tab.classList.add('active');
-    document.getElementById('page-' + tab.dataset.page).classList.add('active');
-    const p = tab.dataset.page;
-    if (p === 'logs') refreshLog();
-    if (p === 'targets') loadAppList();
-    if (p === 'test') populateTestTargets();
-    if (p === 'props') { loadRemoveProps(); if (!propsLoaded) { loadAllProps().then(renderPropList); } else { renderPropList(); } }
+    item.classList.add('active');
+    document.getElementById('page-' + item.dataset.page).classList.add('active');
+    const p = item.dataset.page;
+    if (p === 'log') refreshLog();
+    if (p === 'targets') { loadAppList(); loadTargetsRaw(); }
+    if (p === 'status') { populateTestTargets(); updateFpPreview(); }
+    if (p === 'config') { loadConfigRaw(); if (!propsLoaded) { loadAllProps().then(renderPropList); } else { renderPropList(); } loadRemoveProps(); }
   });
 });
 
-// ---------- 모듈 마스터 on/off ----------
+let expertMode = localStorage.getItem('btfix_expert') === '1';
+function applyExpertModeUI() {
+  document.getElementById('expertModeToggle').checked = expertMode;
+  document.getElementById('configExpertCard').style.display = expertMode ? 'block' : 'none';
+  document.getElementById('configFormCards').style.display = expertMode ? 'none' : 'block';
+  document.getElementById('targetsExpertCard').style.display = expertMode ? 'block' : 'none';
+  document.getElementById('targetsPickerCard').style.display = expertMode ? 'none' : 'block';
+}
+document.getElementById('expertModeToggle').addEventListener('change', e => {
+  expertMode = e.target.checked;
+  localStorage.setItem('btfix_expert', expertMode ? '1' : '0');
+  applyExpertModeUI();
+  if (expertMode) { loadConfigRaw(); loadTargetsRaw(); }
+});
+
 async function loadMasterState() {
   const { stdout } = await safeExec(`[ -f ${DISABLE_FLAG} ] && echo D || echo E`);
   document.getElementById('masterToggle').checked = !stdout.includes('D');
@@ -366,20 +454,19 @@ async function loadMasterState() {
 document.getElementById('masterToggle').addEventListener('change', async e => {
   if (e.target.checked) {
     await safeExec(`rm -f ${DISABLE_FLAG}`);
-    showToast('모듈 활성화됨 (재부팅 권장)');
+    showToast('Module enabled (reboot recommended)');
   } else {
     await safeExec(`touch ${DISABLE_FLAG}`);
-    showToast('모듈 비활성화됨 (재부팅 권장)');
+    showToast('Module disabled (reboot recommended)');
   }
+  updateHeaderSummary(readFormConfig());
 });
 
-// ---------- 설정 ----------
 const CFG_DEFAULTS = {
   ENABLE: '1', PATCH_TYPE: '1', PATCH_TAGS: '1',
   BUILD_TYPE: 'user', BUILD_TAGS: 'release-keys',
   FP_MODE: 'AUTO', BUILD_FP_OVERRIDE: '', DEBUG_MODE: '0'
 };
-
 function parseConfig(text) {
   const cfg = { ...CFG_DEFAULTS };
   text.split('\n').forEach(line => {
@@ -395,14 +482,13 @@ function parseConfig(text) {
 }
 function serializeConfig(cfg) {
   return [
-    '# BuildType Fix Module config (WebUI가 자동 생성/수정)',
+    '# BuildType Fix Module config (managed by the WebUI)',
     `ENABLE=${cfg.ENABLE}`, `PATCH_TYPE=${cfg.PATCH_TYPE}`, `PATCH_TAGS=${cfg.PATCH_TAGS}`,
     `BUILD_TYPE=${cfg.BUILD_TYPE}`, `BUILD_TAGS=${cfg.BUILD_TAGS}`,
     `FP_MODE=${cfg.FP_MODE}`, `BUILD_FP_OVERRIDE=${cfg.BUILD_FP_OVERRIDE}`,
     `DEBUG_MODE=${cfg.DEBUG_MODE}`, ''
   ].join('\n');
 }
-
 let originalFingerprint = null;
 
 function readFormConfig() {
@@ -437,14 +523,12 @@ function updateFieldStates() {
 async function updateHeaderSummary(cfg) {
   const { stdout } = await safeExec(`[ -f ${DISABLE_FLAG} ] && echo D || echo E`);
   const moduleOn = !stdout.includes('D');
-  const parts = [];
-  parts.push(moduleOn ? '모듈 켜짐' : '모듈 꺼짐');
-  if (cfg.PATCH_TYPE === '1') parts.push(`TYPE→${cfg.BUILD_TYPE}`);
-  if (cfg.PATCH_TAGS === '1') parts.push(`TAGS→${cfg.BUILD_TAGS}`);
-  if (cfg.DEBUG_MODE === '1') parts.push('테스트모드 ON');
-  document.getElementById('headerSummary').textContent = parts.join(' · ');
+  const parts = [moduleOn ? 'Module on' : 'Module off'];
+  if (cfg.PATCH_TYPE === '1') parts.push(`TYPE->${cfg.BUILD_TYPE}`);
+  if (cfg.PATCH_TAGS === '1') parts.push(`TAGS->${cfg.BUILD_TAGS}`);
+  if (cfg.DEBUG_MODE === '1') parts.push('debug mode ON');
+  document.getElementById('headerSummary').textContent = parts.join(' | ');
 }
-
 async function loadOriginalFingerprint() {
   const { errno, stdout } = await safeExec('getprop ro.build.fingerprint');
   if (errno === 0 && stdout.trim()) originalFingerprint = stdout.trim();
@@ -452,17 +536,17 @@ async function loadOriginalFingerprint() {
 function updateFpPreview() {
   const box = document.getElementById('fpPreview');
   const mode = document.getElementById('cfgFpMode').value;
-  if (mode === 'DISABLED') { box.textContent = '패치 안 함 (기기 원본 fingerprint 유지)'; return; }
+  if (mode === 'DISABLED') { box.textContent = 'Not patched (original device fingerprint kept)'; return; }
   if (mode === 'OVERRIDE') {
     const v = document.getElementById('cfgFpOverride').value.trim();
-    box.innerHTML = v ? `<b>${escapeHtml(v)}</b>` : '값을 입력하세요';
+    box.innerHTML = v ? `<b>${escapeHtml(v)}</b>` : 'Enter a value';
     return;
   }
-  if (!originalFingerprint) { box.textContent = '원본 fingerprint 불러오는 중...'; return; }
+  if (!originalFingerprint) { box.textContent = 'Loading original fingerprint...'; return; }
   const lastColon = originalFingerprint.lastIndexOf(':');
   const lastSlash = originalFingerprint.lastIndexOf('/');
   if (lastColon === -1 || lastSlash === -1 || lastSlash < lastColon) {
-    box.textContent = '원본 fingerprint 형식을 해석할 수 없음';
+    box.textContent = 'Could not parse the original fingerprint format';
     return;
   }
   const head = originalFingerprint.slice(0, lastColon + 1);
@@ -474,7 +558,6 @@ function updateFpPreview() {
   const newTags = tagsOn ? (document.getElementById('cfgBuildTags').value.trim() || 'release-keys') : origTags;
   box.innerHTML = escapeHtml(head) + '<b>' + escapeHtml(newType) + '/' + escapeHtml(newTags) + '</b>';
 }
-
 async function loadConfig() {
   const { errno, stdout } = await safeExec(`cat ${CONFIG_PATH} 2>/dev/null`);
   applyConfigToForm(errno === 0 ? parseConfig(stdout) : { ...CFG_DEFAULTS });
@@ -491,7 +574,7 @@ async function saveConfig() {
   const content = serializeConfig(readFormConfig());
   const cmd = `cat > ${CONFIG_PATH} << 'BTFIX_EOF'\n${content}\nBTFIX_EOF`;
   const { errno } = await safeExec(cmd);
-  if (errno === 0) flashSaved(); else showToast('저장 실패 (errno ' + errno + ')');
+  if (errno === 0) flashSaved(); else showToast('Save failed (errno ' + errno + ')');
 }
 ['cfgPatchType', 'cfgPatchTags', 'cfgBuildType', 'cfgBuildTags', 'cfgFpMode', 'cfgFpOverride', 'cfgDebugMode'].forEach(id => {
   const el = document.getElementById(id);
@@ -499,23 +582,42 @@ async function saveConfig() {
   el.addEventListener('change', scheduleSave);
 });
 
-// ---------- 타겟: targets.txt 원본 ----------
-async function loadTargets() {
+async function loadConfigRaw() {
+  const { errno, stdout } = await safeExec(`cat ${CONFIG_PATH} 2>/dev/null`);
+  document.getElementById('configRawBox').value = errno === 0 ? stdout : serializeConfig(CFG_DEFAULTS);
+}
+let rawConfigSaveTimer = null;
+document.getElementById('configRawBox').addEventListener('input', () => {
+  clearTimeout(rawConfigSaveTimer);
+  rawConfigSaveTimer = setTimeout(async () => {
+    const content = document.getElementById('configRawBox').value;
+    const cmd = `cat > ${CONFIG_PATH} << 'BTFIX_EOF'\n${content}\nBTFIX_EOF`;
+    const { errno } = await safeExec(cmd);
+    if (errno === 0) { flashSaved(); applyConfigToForm(parseConfig(content)); }
+  }, 500);
+});
+
+async function loadTargetsText() {
   const { errno, stdout } = await safeExec(`cat ${TARGETS_PATH} 2>/dev/null`);
-  document.getElementById('targetsBox').value = errno === 0 ? stdout : '';
   return errno === 0 ? stdout : '';
 }
-async function saveTargets(content) {
+async function saveTargetsText(content) {
   const cmd = `cat > ${TARGETS_PATH} << 'BTFIX_EOF'\n${content}\nBTFIX_EOF`;
   const { errno } = await safeExec(cmd);
   return errno === 0;
 }
-document.getElementById('btnReloadTargets').addEventListener('click', loadTargets);
-document.getElementById('btnSaveTargets').addEventListener('click', async () => {
-  showToast((await saveTargets(document.getElementById('targetsBox').value)) ? '타겟 목록 저장됨' : '저장 실패');
+async function loadTargetsRaw() {
+  document.getElementById('targetsRawBox').value = await loadTargetsText();
+}
+let rawTargetsSaveTimer = null;
+document.getElementById('targetsRawBox').addEventListener('input', () => {
+  clearTimeout(rawTargetsSaveTimer);
+  rawTargetsSaveTimer = setTimeout(async () => {
+    const ok = await saveTargetsText(document.getElementById('targetsRawBox').value);
+    if (ok) flashSaved();
+  }, 500);
 });
 
-// ---------- 타겟: 설치된 앱 목록 (이름 검색 + 대소문자 무관) ----------
 let includeSystemApps = false;
 let installedPkgs = [];
 let labelCache = new Map();
@@ -525,7 +627,7 @@ let hasAapt = false;
 
 document.getElementById('btnToggleSystem').addEventListener('click', () => {
   includeSystemApps = !includeSystemApps;
-  document.getElementById('btnToggleSystem').textContent = includeSystemApps ? '3rd-party만' : '시스템앱';
+  document.getElementById('btnToggleSystem').textContent = includeSystemApps ? 'Third-party only' : 'System apps';
   loadAppList();
 });
 
@@ -536,18 +638,28 @@ function setAppListStatus(text, cls) {
   el.innerHTML = (cls === 'active' ? '<span class="spinner"></span>' : '') + escapeHtml(text);
 }
 
-async function loadAppList() {
-  setAppListStatus('앱 목록 불러오는 중...', 'active');
-  document.getElementById('appList').innerHTML = '';
+async function refreshTargetLines() {
+  const raw = await loadTargetsText();
+  currentTargetLines = raw.split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('#'));
+  return raw;
+}
 
-  const targetsRaw = await loadTargets();
-  currentTargetLines = targetsRaw.split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('#'));
+function isPkgTargeted(pkg) {
+  const included = currentTargetLines.includes(pkg);
+  const excluded = currentTargetLines.includes('!' + pkg);
+  return included && !excluded;
+}
+
+async function loadAppList() {
+  setAppListStatus('Loading apps...', 'active');
+  document.getElementById('appList').innerHTML = '';
+  await refreshTargetLines();
 
   const cmd = includeSystemApps ? 'pm list packages' : 'pm list packages -3';
   const { errno, stdout } = await safeExec(cmd);
   if (errno !== 0) {
-    setAppListStatus('앱 목록을 못 가져왔습니다', 'done');
-    document.getElementById('appList').innerHTML = '<div class="emptyState">pm list packages 실행 실패</div>';
+    setAppListStatus('Could not read the app list', 'done');
+    document.getElementById('appList').innerHTML = '<div class="emptyState">pm list packages failed</div>';
     return;
   }
   installedPkgs = stdout.split('\n').map(l => l.replace(/^package:/, '').trim()).filter(Boolean).sort((a, b) => a.localeCompare(b));
@@ -555,10 +667,9 @@ async function loadAppList() {
   renderAppList();
 
   if (!includeSystemApps) {
-    await prefetchLabels();
-    renderAppList();
+    prefetchLabels().then(renderAppList);
   } else {
-    setAppListStatus('시스템앱 포함 시 이름 조회는 생략됩니다 (패키지명으로 검색)', null);
+    setAppListStatus('Labels are skipped for system apps (too slow) -- search by package name', null);
   }
 }
 
@@ -568,10 +679,12 @@ async function prefetchLabels() {
     hasAapt = r.errno === 0 && r.stdout.trim().length > 0;
     hasAaptChecked = true;
   }
-  if (!hasAapt) { setAppListStatus('이 기기엔 aapt가 없어 앱 이름 조회는 생략됩니다 (패키지명 검색만 가능)', null); return; }
+  if (!hasAapt) {
+    setAppListStatus('No aapt on this device -- showing package names only', null);
+    return;
+  }
 
-  setAppListStatus(`앱 이름 불러오는 중... (${installedPkgs.length}개)`, 'active');
-
+  setAppListStatus(`Loading app names... (${installedPkgs.length})`, 'active');
   const script = 'AAPT=$(which aapt2 2>/dev/null || which aapt 2>/dev/null)\n' +
     'for pkg in ' + installedPkgs.join(' ') + '; do\n' +
     '  apk=$(pm path "$pkg" 2>/dev/null | head -1 | sed "s/^package://")\n' +
@@ -579,7 +692,6 @@ async function prefetchLabels() {
     '  label=$("$AAPT" dump badging "$apk" 2>/dev/null | grep "application-label:" | head -1 | sed -E "s/application-label:.([^\x27]*)./\\1/")\n' +
     '  echo "${pkg}|||${label:-$pkg}"\n' +
     'done';
-
   const { errno, stdout } = await safeExec(script);
   if (errno === 0) {
     stdout.split('\n').forEach(line => {
@@ -591,10 +703,16 @@ async function prefetchLabels() {
   setAppListStatus('', null);
 }
 
+function subprocessCountFor(pkg) {
+  return currentTargetLines.filter(l => {
+    const bare = l.startsWith('!') ? l.slice(1) : l;
+    return bare.startsWith(pkg + ':');
+  }).length;
+}
+
 function renderAppList() {
   const q = document.getElementById('appSearch').value.trim().toLowerCase();
   const listEl = document.getElementById('appList');
-
   let filtered = installedPkgs;
   if (q) {
     filtered = installedPkgs.filter(pkg => {
@@ -603,43 +721,146 @@ function renderAppList() {
     });
   }
   const slice = filtered.slice(0, 300);
-
   if (slice.length === 0) {
-    listEl.innerHTML = '<div class="emptyState">' + (q ? '검색 결과가 없습니다' : '표시할 앱이 없습니다') + '</div>';
+    listEl.innerHTML = '<div class="emptyState">' + (q ? 'No apps match your search' : 'No apps to show') + '</div>';
     return;
   }
-
   listEl.innerHTML = slice.map(pkg => {
-    const already = currentTargetLines.some(l => l === pkg || l.startsWith(pkg + ':'));
+    const targeted = isPkgTargeted(pkg);
+    const subCount = subprocessCountFor(pkg);
     const label = labelCache.get(pkg);
-    return '<div class="listRow ' + (already ? 'dim' : '') + '">' +
-      '<input type="checkbox" class="appCheck" data-pkg="' + escapeHtml(pkg) + '" ' + (already ? 'disabled' : '') + '>' +
-      '<div class="main">' +
+    return '<div class="listRow" data-pkg="' + escapeHtml(pkg) + '">' +
+      '<input type="checkbox" class="appCheck" data-pkg="' + escapeHtml(pkg) + '" ' + (targeted ? 'checked' : '') + '>' +
+      '<div class="main" data-openpkg="' + escapeHtml(pkg) + '">' +
       (label ? '<div class="label">' + escapeHtml(label) + '</div><div class="pkg">' + escapeHtml(pkg) + '</div>' : '<div class="pkg">' + escapeHtml(pkg) + '</div>') +
       '</div>' +
-      (already ? '<span class="tag">등록됨</span>' : '') +
+      (subCount ? '<span class="tag">' + subCount + ' rule' + (subCount > 1 ? 's' : '') + '</span>' : '') +
+      '<span class="chevron">&rsaquo;</span>' +
       '</div>';
-  }).join('') + (filtered.length > slice.length ? '<div class="emptyState">+ ' + (filtered.length - slice.length) + '개 더 있음, 검색으로 좁혀보세요</div>' : '');
+  }).join('') + (filtered.length > slice.length ? '<div class="emptyState">+ ' + (filtered.length - slice.length) + ' more -- narrow with search</div>' : '');
+
+  listEl.querySelectorAll('.appCheck').forEach(cb => {
+    cb.addEventListener('change', async () => {
+      cb.disabled = true;
+      await toggleTarget(cb.dataset.pkg, cb.checked);
+      cb.disabled = false;
+    });
+  });
+  listEl.querySelectorAll('[data-openpkg]').forEach(el => {
+    el.addEventListener('click', () => openPkgSheet(el.dataset.openpkg));
+  });
 }
 document.getElementById('appSearch').addEventListener('input', renderAppList);
 
-document.getElementById('btnAddSelected').addEventListener('click', async () => {
-  const checked = [...document.querySelectorAll('.appCheck:checked')].map(el => el.dataset.pkg);
-  if (checked.length === 0) { showToast('선택된 앱이 없습니다'); return; }
-  const existing = await loadTargets();
-  const toAdd = checked.filter(pkg => !currentTargetLines.includes(pkg));
-  const newContent = (existing.trimEnd() + '\n' + toAdd.join('\n') + '\n').replace(/\n{3,}/g, '\n\n');
-  const ok = await saveTargets(newContent);
-  if (ok) {
-    showToast(toAdd.length + '개 타겟에 추가됨');
-    document.getElementById('targetsBox').value = newContent;
-    loadAppList();
+async function toggleTarget(pkg, wantTargeted) {
+  const raw = await loadTargetsText();
+  let lines = raw.split('\n');
+  if (wantTargeted) {
+    lines = lines.filter(l => l.trim() !== '!' + pkg);
+    if (!lines.some(l => l.trim() === pkg)) lines.push(pkg);
   } else {
-    showToast('저장 실패');
+    lines = lines.filter(l => l.trim() !== pkg);
   }
+  const newContent = lines.filter((l, i, arr) => l.trim() !== '' || i === arr.length - 1).join('\n');
+  const ok = await saveTargetsText(newContent);
+  if (ok) {
+    showToast(pkg + (wantTargeted ? ' added' : ' removed'));
+    await refreshTargetLines();
+    document.getElementById('targetsRawBox').value = newContent;
+  } else {
+    showToast('Failed to update targets');
+  }
+  renderAppList();
+}
+
+let sheetPkg = null;
+function openPkgSheet(pkg) {
+  sheetPkg = pkg;
+  document.getElementById('sheetLabel').textContent = labelCache.get(pkg) || pkg;
+  document.getElementById('sheetPkg').textContent = pkg;
+  document.getElementById('sheetBaseToggle').checked = isPkgTargeted(pkg);
+  document.getElementById('sheetNewSub').value = '';
+  renderSheetRules();
+  document.getElementById('sheetBackdrop').classList.add('open');
+  document.getElementById('pkgSheet').classList.add('open');
+}
+function closePkgSheet() {
+  document.getElementById('sheetBackdrop').classList.remove('open');
+  document.getElementById('pkgSheet').classList.remove('open');
+  sheetPkg = null;
+  renderAppList();
+}
+document.getElementById('sheetBackdrop').addEventListener('click', closePkgSheet);
+document.getElementById('sheetClose').addEventListener('click', closePkgSheet);
+
+document.getElementById('sheetBaseToggle').addEventListener('change', async e => {
+  if (!sheetPkg) return;
+  await toggleTarget(sheetPkg, e.target.checked);
+  document.getElementById('sheetBaseToggle').checked = isPkgTargeted(sheetPkg);
 });
 
-// ---------- Properties ----------
+function renderSheetRules() {
+  const listEl = document.getElementById('sheetRuleList');
+  const rules = currentTargetLines.filter(l => {
+    const bare = l.startsWith('!') ? l.slice(1) : l;
+    return bare.startsWith(sheetPkg + ':');
+  });
+  if (rules.length === 0) {
+    listEl.innerHTML = '<div class="hint" style="margin-bottom:8px;">No subprocess-specific rules yet.</div>';
+    return;
+  }
+  listEl.innerHTML = rules.map(rule => {
+    const isExclude = rule.startsWith('!');
+    const text = isExclude ? rule.slice(1) : rule;
+    return '<div class="ruleRow">' +
+      '<span class="ruleType ' + (isExclude ? 'exclude' : 'include') + '">' + (isExclude ? 'EXCLUDE' : 'INCLUDE') + '</span>' +
+      '<span class="ruleText">' + escapeHtml(text) + '</span>' +
+      '<button class="btn-icon" data-removerule="' + escapeHtml(rule) + '">X</button>' +
+      '</div>';
+  }).join('');
+  listEl.querySelectorAll('[data-removerule]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      await removeExactTargetLine(btn.dataset.removerule);
+      renderSheetRules();
+    });
+  });
+}
+
+async function removeExactTargetLine(exactLine) {
+  const raw = await loadTargetsText();
+  const newContent = raw.split('\n').filter(l => l.trim() !== exactLine).join('\n');
+  const ok = await saveTargetsText(newContent);
+  if (ok) {
+    await refreshTargetLines();
+    document.getElementById('targetsRawBox').value = newContent;
+    showToast('Rule removed');
+  }
+}
+async function addTargetLine(line) {
+  const raw = await loadTargetsText();
+  const lines = raw.split('\n').filter(l => l.trim() !== line);
+  lines.push(line);
+  const newContent = lines.join('\n');
+  const ok = await saveTargetsText(newContent);
+  if (ok) {
+    await refreshTargetLines();
+    document.getElementById('targetsRawBox').value = newContent;
+  }
+  return ok;
+}
+document.getElementById('sheetAddInclude').addEventListener('click', async () => {
+  const sub = document.getElementById('sheetNewSub').value.trim();
+  if (!sub || !sheetPkg) { showToast('Enter a subprocess name'); return; }
+  const ok = await addTargetLine(sheetPkg + ':' + sub);
+  if (ok) { showToast('Included ' + sheetPkg + ':' + sub); document.getElementById('sheetNewSub').value = ''; renderSheetRules(); }
+});
+document.getElementById('sheetAddExclude').addEventListener('click', async () => {
+  const sub = document.getElementById('sheetNewSub').value.trim();
+  if (!sub || !sheetPkg) { showToast('Enter a subprocess name'); return; }
+  const ok = await addTargetLine('!' + sheetPkg + ':' + sub);
+  if (ok) { showToast('Excluded ' + sheetPkg + ':' + sub); document.getElementById('sheetNewSub').value = ''; renderSheetRules(); }
+});
+
 let allProps = [];
 let propsLoaded = false;
 const PROP_RENDER_CAP = 150;
@@ -650,16 +871,10 @@ function setPropListStatus(text, cls) {
   el.className = 'statusText' + (cls ? ' ' + cls : '');
   el.innerHTML = (cls === 'active' ? '<span class="spinner"></span>' : '') + escapeHtml(text);
 }
-
 async function loadAllProps() {
   setPropListStatus('Loading properties...', 'active');
-  document.getElementById('propList').innerHTML = '';
   const { errno, stdout } = await safeExec('getprop');
-  if (errno !== 0) {
-    allProps = [];
-    setPropListStatus('Failed to read properties', 'done');
-    return;
-  }
+  if (errno !== 0) { allProps = []; setPropListStatus('Failed to read properties', 'done'); return; }
   allProps = stdout.split('\n').map(line => {
     const m = line.match(/^\[([^\]]+)\]:\s*\[([^\]]*)\]$/);
     return m ? { key: m[1], value: m[2] } : null;
@@ -667,88 +882,90 @@ async function loadAllProps() {
   propsLoaded = true;
   setPropListStatus('', null);
 }
-
 async function setProp(key, value) {
-  const { errno, stderr } = await safeExec('resetprop -n ' + shQuote(key) + ' ' + shQuote(value) + ' 2>&1');
+  const { errno } = await safeExec('resetprop -n ' + shQuote(key) + ' ' + shQuote(value) + ' 2>&1');
   return errno === 0;
+}
+async function addToRemoveList(key) {
+  const current = document.getElementById('removePropsBox').value;
+  const lines = current.split('\n').map(l => l.trim()).filter(Boolean);
+  if (!lines.includes(key)) lines.push(key);
+  const newContent = lines.join('\n') + '\n';
+  document.getElementById('removePropsBox').value = newContent;
+  await saveAndApplyRemoveProps(newContent);
 }
 
 function renderPropList() {
   const q = document.getElementById('propSearch').value.trim().toLowerCase();
   const listEl = document.getElementById('propList');
   const filtered = q ? allProps.filter(p => p.key.toLowerCase().includes(q) || p.value.toLowerCase().includes(q)) : allProps;
-
   if (filtered.length === 0) {
     listEl.innerHTML = '<div class="emptyState">' + (q ? 'No properties match "' + escapeHtml(q) + '"' : 'No properties found') + '</div>';
     return;
   }
-
   const slice = filtered.slice(0, PROP_RENDER_CAP);
   listEl.innerHTML = slice.map(p =>
     '<div class="propRow" data-key="' + escapeHtml(p.key) + '">' +
     '<div class="propTop">' +
-    '<div class="main">' +
+    '<div class="main propMain" data-tapedit="' + escapeHtml(p.key) + '">' +
     '<div class="propKey">' + escapeHtml(p.key) + '</div>' +
     '<div class="propValue' + (p.value ? '' : ' empty') + '" data-role="display">' + (escapeHtml(p.value) || '(empty)') + '</div>' +
     '</div>' +
-    '<div class="propActions">' +
-    '<button class="btn-ghost btn-small" data-editprop="' + escapeHtml(p.key) + '">Edit</button>' +
-    '<button class="btn-ghost btn-small" data-delprop="' + escapeHtml(p.key) + '">Delete</button>' +
-    '</div>' +
+    '<button class="btn-ghost btn-small" data-removeprop="' + escapeHtml(p.key) + '">Remove</button>' +
     '</div>' +
     '</div>'
-  ).join('') + (filtered.length > slice.length
-    ? '<div class="emptyState">+ ' + (filtered.length - slice.length) + ' more — narrow with search</div>'
-    : '');
+  ).join('') + (filtered.length > slice.length ? '<div class="emptyState">+ ' + (filtered.length - slice.length) + ' more -- narrow with search</div>' : '');
 
-  listEl.querySelectorAll('[data-delprop]').forEach(btn => {
+  listEl.querySelectorAll('[data-removeprop]').forEach(btn => {
     btn.addEventListener('click', async () => {
-      const key = btn.dataset.delprop;
-      await safeExec('resetprop --delete ' + shQuote(key) + ' 2>/dev/null');
-      showToast(key + ' removed');
+      const key = btn.dataset.removeprop;
+      await addToRemoveList(key);
+      showToast(key + ' queued and removed now');
       await loadAllProps();
       renderPropList();
     });
   });
-
-  listEl.querySelectorAll('[data-editprop]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const key = btn.dataset.editprop;
-      const row = listEl.querySelector('.propRow[data-key="' + CSS.escape(key) + '"]');
-      if (!row || row.querySelector('.propEditInput')) return;
-      const current = (allProps.find(p => p.key === key) || {}).value || '';
-      const displayEl = row.querySelector('[data-role="display"]');
-      displayEl.style.display = 'none';
-
-      const wrap = document.createElement('div');
-      wrap.innerHTML =
-        '<input type="text" class="propEditInput" value="' + escapeHtml(current) + '">' +
-        '<div class="propEditRow">' +
-        '<button class="btn-ghost btn-small" data-cancel>Cancel</button>' +
-        '<button class="btn-primary btn-small" data-save>Save</button>' +
-        '</div>';
-      row.querySelector('.main').appendChild(wrap);
-      const input = wrap.querySelector('input');
-      input.focus();
-
-      wrap.querySelector('[data-cancel]').addEventListener('click', () => {
-        wrap.remove();
-        displayEl.style.display = '';
-      });
-      wrap.querySelector('[data-save]').addEventListener('click', async () => {
-        const newValue = input.value;
-        const ok = await setProp(key, newValue);
-        showToast(ok ? key + ' updated (resets on reboot)' : 'Failed to set ' + key);
-        await loadAllProps();
-        renderPropList();
-      });
-    });
+  listEl.querySelectorAll('[data-tapedit]').forEach(el => {
+    el.addEventListener('click', () => startPropEdit(el.dataset.tapedit));
   });
 }
-document.getElementById('btnPropRefresh').addEventListener('click', async () => {
-  await loadAllProps();
-  renderPropList();
-});
+
+function startPropEdit(key) {
+  const listEl = document.getElementById('propList');
+  const row = listEl.querySelector('.propRow[data-key="' + CSS.escape(key) + '"]');
+  if (!row || row.querySelector('.propEditInput')) return;
+  const current = (allProps.find(p => p.key === key) || {}).value || '';
+  const mainEl = row.querySelector('.propMain');
+  const displayEl = row.querySelector('[data-role="display"]');
+  displayEl.style.display = 'none';
+
+  const wrap = document.createElement('div');
+  wrap.innerHTML =
+    '<input type="text" class="propEditInput" value="' + escapeHtml(current) + '">' +
+    '<div class="propEditRow">' +
+    '<button class="btn-ghost btn-small" data-cancel>Cancel</button>' +
+    '<button class="btn-primary btn-small" data-save>Save</button>' +
+    '</div>';
+  mainEl.appendChild(wrap);
+  const input = wrap.querySelector('input');
+  input.focus();
+  input.addEventListener('click', e => e.stopPropagation());
+
+  wrap.querySelector('[data-cancel]').addEventListener('click', e => {
+    e.stopPropagation();
+    wrap.remove();
+    displayEl.style.display = '';
+  });
+  wrap.querySelector('[data-save]').addEventListener('click', async e => {
+    e.stopPropagation();
+    const ok = await setProp(key, input.value);
+    showToast(ok ? key + ' updated (resets on reboot)' : 'Failed to set ' + key);
+    await loadAllProps();
+    renderPropList();
+  });
+}
+
+document.getElementById('btnPropRefresh').addEventListener('click', async () => { await loadAllProps(); renderPropList(); });
 document.getElementById('propSearch').addEventListener('input', renderPropList);
 document.getElementById('btnAddProp').addEventListener('click', async () => {
   const key = document.getElementById('newPropKey').value.trim();
@@ -764,42 +981,30 @@ document.getElementById('btnAddProp').addEventListener('click', async () => {
   }
 });
 
-// ---------- 프로퍼티: 제거 목록 (remove_props.txt) ----------
 async function loadRemoveProps() {
   const { errno, stdout } = await safeExec(`cat ${REMOVE_PROPS_PATH} 2>/dev/null`);
   document.getElementById('removePropsBox').value = errno === 0 ? stdout : '';
 }
-async function saveRemoveProps() {
-  const content = document.getElementById('removePropsBox').value;
-  const cmd = `cat > ${REMOVE_PROPS_PATH} << 'BTFIX_EOF'\n${content}\nBTFIX_EOF`;
-  const { errno } = await safeExec(cmd);
-  return errno === 0;
-}
-document.getElementById('btnReloadRemoveProps').addEventListener('click', loadRemoveProps);
-document.getElementById('btnSaveRemoveProps').addEventListener('click', async () => {
-  showToast((await saveRemoveProps()) ? '저장됨 (다음 재부팅부터 자동 적용)' : '저장 실패');
-});
-
 function setRemovePropsStatus(text, cls) {
   const el = document.getElementById('removePropsStatus');
   el.className = 'statusText' + (cls ? ' ' + cls : '');
   el.innerHTML = (cls === 'active' ? '<span class="spinner"></span>' : '') + escapeHtml(text || '');
 }
+async function saveAndApplyRemoveProps(content) {
+  const cmd = `cat > ${REMOVE_PROPS_PATH} << 'BTFIX_EOF'\n${content}\nBTFIX_EOF`;
+  await safeExec(cmd);
+  flashSaved();
 
-document.getElementById('btnApplyRemoveNow').addEventListener('click', async () => {
-  await saveRemoveProps();
-  const lines = document.getElementById('removePropsBox').value.split('\n')
-    .map(l => l.trim()).filter(l => l && !l.startsWith('#'));
-  if (lines.length === 0) { showToast('목록이 비어있습니다'); return; }
+  const lines = content.split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('#'));
+  if (lines.length === 0) { setRemovePropsStatus('', null); return; }
 
-  setRemovePropsStatus('적용 중...', 'active');
+  setRemovePropsStatus('Applying...', 'active');
   let removed = 0;
   for (const line of lines) {
     if (line.startsWith('*') && line.endsWith('*')) {
       const pattern = line.slice(1, -1);
-      const { stdout } = await safeExec("getprop | grep -i '" + pattern + "' | sed -E 's/^\\[([^]]+)\\].*/\\1/'");
-      const keys = stdout.split('\n').map(k => k.trim()).filter(Boolean);
-      for (const key of keys) {
+      const { stdout } = await safeExec("getprop | grep -i " + shQuote(pattern) + " | sed -E 's/^\\[([^]]+)\\].*/\\1/'");
+      for (const key of stdout.split('\n').map(k => k.trim()).filter(Boolean)) {
         const r = await safeExec('resetprop --delete ' + shQuote(key) + ' 2>/dev/null');
         if (r.errno === 0) removed++;
       }
@@ -808,16 +1013,19 @@ document.getElementById('btnApplyRemoveNow').addEventListener('click', async () 
       if (r.errno === 0) removed++;
     }
   }
-  setRemovePropsStatus('완료 - ' + removed + '개 프로퍼티 제거됨', 'done');
-  showToast(removed + '개 프로퍼티 제거됨');
+  setRemovePropsStatus('Applied -- ' + removed + ' propert' + (removed === 1 ? 'y' : 'ies') + ' removed', 'done');
+}
+let removePropsSaveTimer = null;
+document.getElementById('removePropsBox').addEventListener('input', () => {
+  clearTimeout(removePropsSaveTimer);
+  removePropsSaveTimer = setTimeout(() => saveAndApplyRemoveProps(document.getElementById('removePropsBox').value), 500);
 });
 
-// ---------- 테스트 ----------
 async function populateTestTargets() {
-  const targetsRaw = await loadTargets();
-  const lines = targetsRaw.split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('#'));
+  const raw = await loadTargetsText();
+  const lines = raw.split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('#') && !l.startsWith('!'));
   const sel = document.getElementById('testTargetSelect');
-  sel.innerHTML = '<option value="">targets.txt에서 선택...</option>' +
+  sel.innerHTML = '<option value="">Pick from targets...</option>' +
     lines.map(l => '<option value="' + escapeHtml(l.split(':')[0]) + '">' + escapeHtml(l) + '</option>').join('');
 }
 document.getElementById('testTargetSelect').addEventListener('change', e => {
@@ -830,43 +1038,42 @@ function setTestStatus(text, cls) {
 }
 document.getElementById('btnRunTest').addEventListener('click', async () => {
   const pkg = document.getElementById('testTargetInput').value.trim() || document.getElementById('testTargetSelect').value;
-  if (!pkg) { showToast('테스트할 패키지를 선택하거나 입력하세요'); return; }
+  if (!pkg) { showToast('Pick or type a package to test'); return; }
   const btn = document.getElementById('btnRunTest');
   btn.disabled = true;
   document.getElementById('testResultCard').style.display = 'block';
   const testlog = document.getElementById('testlog');
   testlog.textContent = '';
   try {
-    setTestStatus('앱 종료 중...', 'active');
+    setTestStatus('Stopping app...', 'active');
     await safeExec('am force-stop ' + pkg);
     await safeExec('logcat -c');
     await new Promise(r => setTimeout(r, 400));
-    setTestStatus('앱 실행 중... (' + pkg + ')', 'active');
+    setTestStatus('Launching ' + pkg + '...', 'active');
     const launch = await safeExec('monkey -p ' + pkg + ' -c android.intent.category.LAUNCHER 1 2>&1');
     if (launch.errno !== 0 && !launch.stdout.includes('Events injected')) {
-      testlog.textContent = '앱 실행 실패:\n' + (launch.stdout || launch.stderr);
-      setTestStatus('실행 실패 - 패키지명 확인해보세요', 'done');
+      testlog.textContent = 'Launch failed:\n' + (launch.stdout || launch.stderr);
+      setTestStatus('Launch failed -- check the package name', 'done');
       btn.disabled = false;
       return;
     }
-    setTestStatus('로그 대기 중...', 'active');
+    setTestStatus('Waiting for logs...', 'active');
     await new Promise(r => setTimeout(r, 2500));
-    setTestStatus('로그 확인 중...', 'active');
+    setTestStatus('Checking logs...', 'active');
     const { stdout } = await safeExec('logcat -d -s BuildTypeFix 2>&1');
     const lines = stdout.split('\n').filter(l => l.includes('BuildTypeFix'));
     if (lines.length === 0) {
-      testlog.textContent = '패치 로그가 안 찍혔습니다.\n\n확인할 것:\n- targets.txt에 등록돼 있는지\n- 모듈이 켜짐 상태인지\n- 재부팅 없이 방금 설치/수정했다면 재부팅 필요';
-      setTestStatus('로그 없음', 'done');
+      testlog.textContent = 'No patch log appeared.\n\nCheck:\n- is this package in targets.txt?\n- is the module enabled?\n- did you just install/update without rebooting?';
+      setTestStatus('No logs', 'done');
     } else {
       testlog.innerHTML = lines.map(colorizeLine).join('\n');
-      setTestStatus(lines.some(l => l.includes('[Patcher]')) ? '완료 - 패치 확인됨' : '완료 - 매칭은 됐지만 패치 로그 없음', 'done');
+      setTestStatus(lines.some(l => l.includes('[Patcher]')) ? 'Done -- patch confirmed' : 'Done -- matched but no patch log', 'done');
     }
   } finally {
     btn.disabled = false;
   }
 });
 
-// ---------- 로그 ----------
 let autoRefreshTimer = null;
 function colorizeLine(line) {
   const esc = escapeHtml(line);
@@ -880,16 +1087,16 @@ async function refreshLog() {
   const filter = document.getElementById('logFilter').value;
   const box = document.getElementById('logbox');
   const { errno, stdout, stderr } = await safeExec('logcat -d -s BuildTypeFix 2>&1');
-  if (errno !== 0) { box.textContent = 'logcat 실행 실패 (errno ' + errno + ')\n' + (stderr || stdout); return; }
+  if (errno !== 0) { box.textContent = 'logcat failed (errno ' + errno + ')\n' + (stderr || stdout); return; }
   let lines = stdout.split('\n').filter(l => l.includes('BuildTypeFix'));
   if (lines.length === 0) {
-    box.textContent = '로그가 없습니다.\n\n타겟 앱을 아직 실행한 적이 없을 수 있습니다. "테스트" 탭에서 바로 실행해보세요.';
+    box.textContent = 'No logs yet.\n\nThe target app may not have launched since the last reboot/log clear. Try Status -> Quick Test.';
     return;
   }
   if (filter === 'watcher') lines = lines.filter(l => l.includes('[Watcher]'));
   else if (filter === 'hook') lines = lines.filter(l => l.includes('[NativeHook]'));
   else if (filter === 'patch') lines = lines.filter(l => /\[Patcher\]|\[Zygisk\]|\[Match\]|\[Config\]/.test(l));
-  box.innerHTML = lines.length ? lines.map(colorizeLine).join('\n') : '(필터에 해당하는 로그 없음 - 테스트 모드가 꺼져있으면 Watcher/NativeHook 로그는 안 남습니다)';
+  box.innerHTML = lines.length ? lines.map(colorizeLine).join('\n') : '(nothing matches this filter -- Watcher/NativeHook only log when debug mode is on)';
   box.scrollTop = box.scrollHeight;
 }
 document.getElementById('autoRefresh').addEventListener('change', e => {
@@ -899,17 +1106,18 @@ document.getElementById('autoRefresh').addEventListener('change', e => {
 document.getElementById('btnRefreshLog').addEventListener('click', refreshLog);
 document.getElementById('btnClearLog').addEventListener('click', async () => {
   await safeExec('logcat -c');
-  document.getElementById('logbox').textContent = '로그 버퍼를 비웠습니다.';
-  showToast('logcat 버퍼 초기화됨');
+  document.getElementById('logbox').textContent = 'Log buffer cleared.';
+  showToast('logcat buffer cleared');
 });
 document.getElementById('logFilter').addEventListener('change', refreshLog);
 
-// ---------- 초기화 ----------
 (async () => {
+  applyExpertModeUI();
   await loadMasterState();
   await loadOriginalFingerprint();
   await loadConfig();
-  await loadTargets();
+  await refreshTargetLines();
+  await populateTestTargets();
 })();
 </script>
 
