@@ -13,16 +13,19 @@
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
 
 enum class FingerprintMode {
-    REPLACE_USERDEBUG,
+    AUTO,               // 현재 fingerprint의 TYPE/TAGS 세그먼트만 build_type/build_tags에 맞춰 재구성
+    REPLACE_USERDEBUG,  // 구버전 호환용 별칭 (AUTO와 동일하게 처리)
     OVERRIDE,
     DISABLED
 };
 
 struct ModuleConfig {
     bool enabled = true;
+    bool patch_type = true;
+    bool patch_tags = true;
     std::string build_type = "user";
     std::string build_tags = "release-keys";
-    FingerprintMode fp_mode = FingerprintMode::REPLACE_USERDEBUG;
+    FingerprintMode fp_mode = FingerprintMode::AUTO;
     std::string fp_override = "";
 };
 
@@ -53,6 +56,10 @@ public:
 
             if (key == "ENABLE") {
                 cfg.enabled = (val == "1" || val == "true");
+            } else if (key == "PATCH_TYPE") {
+                cfg.patch_type = (val == "1" || val == "true");
+            } else if (key == "PATCH_TAGS") {
+                cfg.patch_tags = (val == "1" || val == "true");
             } else if (key == "BUILD_TYPE") {
                 cfg.build_type = val;
             } else if (key == "BUILD_TAGS") {
@@ -60,7 +67,7 @@ public:
             } else if (key == "FP_MODE") {
                 if (val == "OVERRIDE") cfg.fp_mode = FingerprintMode::OVERRIDE;
                 else if (val == "DISABLED") cfg.fp_mode = FingerprintMode::DISABLED;
-                else cfg.fp_mode = FingerprintMode::REPLACE_USERDEBUG;
+                else cfg.fp_mode = FingerprintMode::AUTO;
             } else if (key == "BUILD_FP_OVERRIDE") {
                 cfg.fp_override = val;
             }

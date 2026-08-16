@@ -6,206 +6,230 @@
 <title>BuildType Fix</title>
 <style>
   :root {
-    --bg: #0f1115;
-    --card: #171a21;
-    --card-border: #262b36;
-    --text: #e6e8ec;
-    --sub: #8a92a3;
-    --accent: #4c8dff;
-    --green: #34d399;
-    --red: #f87171;
-    --yellow: #fbbf24;
+    --bg: #0f1115; --card: #171a21; --border: #262b36;
+    --text: #e6e8ec; --sub: #8a92a3; --accent: #4c8dff;
+    --green: #34d399; --red: #f87171; --yellow: #fbbf24; --pink: #f472b6;
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--text);
-    font-family: -apple-system, Roboto, "Segoe UI", sans-serif;
-    padding-bottom: 32px;
-  }
-  header {
-    padding: 20px 16px 12px;
-    position: sticky; top: 0;
-    background: linear-gradient(180deg, var(--bg) 80%, transparent);
-    z-index: 10;
-  }
-  header h1 { font-size: 20px; margin: 0 0 4px; }
-  header .sub { color: var(--sub); font-size: 13px; }
-  .status-pill {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 4px 10px; border-radius: 999px;
-    background: var(--card); border: 1px solid var(--card-border);
-    font-size: 12px; margin-top: 8px;
-  }
-  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--sub); }
+  body { margin: 0; background: var(--bg); color: var(--text); font-family: -apple-system, Roboto, "Segoe UI", sans-serif; padding-bottom: 32px; }
+
+  header { padding: 18px 16px 10px; position: sticky; top: 0; background: var(--bg); z-index: 10; }
+  header .titleRow { display: flex; align-items: center; justify-content: space-between; }
+  header h1 { font-size: 19px; margin: 0; }
+  header .sub { color: var(--sub); font-size: 12px; margin-top: 2px; }
+
+  .masterSwitch { display: flex; align-items: center; gap: 8px; }
+  .masterSwitch span { font-size: 12px; color: var(--sub); }
+
+  .statusLine { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .pill { display: inline-flex; align-items: center; gap: 5px; padding: 4px 9px; border-radius: 999px; background: var(--card); border: 1px solid var(--border); font-size: 11px; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--sub); }
   .dot.on { background: var(--green); }
   .dot.off { background: var(--red); }
 
-  .tabs {
-    display: flex; gap: 6px; padding: 0 16px 12px;
-    position: sticky; top: 64px; background: var(--bg); z-index: 9;
-  }
-  .tab {
-    flex: 1; text-align: center; padding: 10px 0; border-radius: 10px;
-    background: var(--card); border: 1px solid var(--card-border);
-    font-size: 13px; color: var(--sub); cursor: pointer; user-select: none;
-  }
+  .tabs { display: flex; gap: 6px; padding: 10px 16px 10px; position: sticky; top: 58px; background: var(--bg); z-index: 9; overflow-x: auto; }
+  .tab { flex: 1; text-align: center; padding: 9px 6px; border-radius: 10px; background: var(--card); border: 1px solid var(--border); font-size: 12.5px; color: var(--sub); white-space: nowrap; }
   .tab.active { color: var(--text); border-color: var(--accent); background: #16233d; }
 
   main { padding: 0 16px; }
   .page { display: none; }
   .page.active { display: block; }
 
-  .card {
-    background: var(--card); border: 1px solid var(--card-border);
-    border-radius: 14px; padding: 16px; margin-bottom: 14px;
-  }
-  .card h2 { font-size: 14px; margin: 0 0 12px; color: var(--sub); font-weight: 600; text-transform: uppercase; letter-spacing: .03em; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px; margin-bottom: 14px; }
+  .card h2 { font-size: 13px; margin: 0 0 10px; color: var(--sub); font-weight: 600; text-transform: uppercase; letter-spacing: .03em; }
+  .card .desc { font-size: 12px; color: var(--sub); margin: -6px 0 12px; line-height: 1.5; }
 
-  .row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--card-border); }
+  .row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); }
   .row:last-child { border-bottom: none; }
+  .row.col { flex-direction: column; align-items: stretch; }
   .row label { font-size: 14px; }
-  .row .hint { font-size: 12px; color: var(--sub); margin-top: 2px; }
+  .row .hint { font-size: 11px; color: var(--sub); margin-top: 2px; }
 
-  input[type=text] {
-    width: 100%; background: #0d1015; border: 1px solid var(--card-border);
-    color: var(--text); padding: 10px 12px; border-radius: 10px; font-size: 14px;
-    margin-top: 6px;
-  }
-  textarea {
-    width: 100%; min-height: 140px; background: #0d1015; border: 1px solid var(--card-border);
-    color: var(--text); padding: 10px 12px; border-radius: 10px; font-size: 13px;
-    font-family: ui-monospace, monospace; resize: vertical; margin-top: 6px;
-  }
+  input[type=text] { width: 100%; background: #0d1015; border: 1px solid var(--border); color: var(--text); padding: 10px 12px; border-radius: 10px; font-size: 13px; margin-top: 6px; font-family: ui-monospace, monospace; }
+  input[type=text]:disabled { opacity: .35; }
+  textarea { width: 100%; min-height: 120px; background: #0d1015; border: 1px solid var(--border); color: var(--text); padding: 10px 12px; border-radius: 10px; font-size: 12.5px; font-family: ui-monospace, monospace; resize: vertical; margin-top: 6px; }
+  select { background: #0d1015; border: 1px solid var(--border); color: var(--text); padding: 9px 10px; border-radius: 10px; font-size: 13px; margin-top: 6px; width: 100%; }
 
-  .switch { position: relative; width: 46px; height: 26px; flex-shrink: 0; }
+  .switch { position: relative; width: 44px; height: 25px; flex-shrink: 0; }
   .switch input { opacity: 0; width: 0; height: 0; }
-  .slider {
-    position: absolute; inset: 0; background: #2a2f3a; border-radius: 999px;
-    transition: .15s; cursor: pointer;
-  }
-  .slider::before {
-    content: ""; position: absolute; width: 20px; height: 20px; left: 3px; top: 3px;
-    background: #fff; border-radius: 50%; transition: .15s;
-  }
+  .slider { position: absolute; inset: 0; background: #2a2f3a; border-radius: 999px; transition: .15s; cursor: pointer; }
+  .slider::before { content: ""; position: absolute; width: 19px; height: 19px; left: 3px; top: 3px; background: #fff; border-radius: 50%; transition: .15s; }
   .switch input:checked + .slider { background: var(--accent); }
-  .switch input:checked + .slider::before { transform: translateX(20px); }
+  .switch input:checked + .slider::before { transform: translateX(19px); }
+  .switch.big { width: 50px; height: 28px; }
+  .switch.big .slider::before { width: 22px; height: 22px; }
+  .switch.big input:checked + .slider::before { transform: translateX(22px); }
 
-  select {
-    background: #0d1015; border: 1px solid var(--card-border); color: var(--text);
-    padding: 8px 10px; border-radius: 10px; font-size: 13px; margin-top: 6px; width: 100%;
-  }
-
-  button {
-    border: none; border-radius: 12px; padding: 13px 16px; font-size: 14px; font-weight: 600;
-    width: 100%; cursor: pointer;
-  }
-  .btn-primary { background: var(--accent); color: #fff; }
-  .btn-ghost { background: var(--card); color: var(--text); border: 1px solid var(--card-border); }
+  button { border: none; border-radius: 12px; padding: 12px 16px; font-size: 13.5px; font-weight: 600; cursor: pointer; }
+  .btn-primary { background: var(--accent); color: #fff; width: 100%; }
+  .btn-ghost { background: var(--card); color: var(--text); border: 1px solid var(--border); width: 100%; }
   .btn-row { display: flex; gap: 8px; }
   .btn-row button { flex: 1; }
+  .btn-small { padding: 7px 12px; font-size: 12px; width: auto; }
 
-  pre#logbox {
-    background: #0a0c10; border: 1px solid var(--card-border); border-radius: 12px;
-    padding: 10px; font-size: 11px; line-height: 1.5; overflow-x: auto;
-    white-space: pre-wrap; word-break: break-all; max-height: 55vh; overflow-y: auto;
-    margin: 0;
-  }
-  .log-line-watcher { color: var(--yellow); }
-  .log-line-hook { color: #f472b6; }
-  .log-line-patch { color: var(--green); }
-  .log-line-error { color: var(--red); }
+  .fpPreview { background: #0a0c10; border: 1px dashed var(--border); border-radius: 10px; padding: 10px; font-size: 11px; font-family: ui-monospace, monospace; word-break: break-all; color: var(--sub); margin-top: 8px; }
+  .fpPreview b { color: var(--green); }
 
-  .toolbar { display: flex; gap: 8px; margin-bottom: 10px; align-items: center; }
-  .toolbar select { flex: 1; margin-top: 0; }
-  .toolbar button { width: auto; padding: 10px 14px; flex-shrink: 0; }
+  .searchBox { display: flex; gap: 8px; margin-bottom: 10px; }
+  .searchBox input { flex: 1; margin-top: 0; }
+  .appList { max-height: 42vh; overflow-y: auto; border: 1px solid var(--border); border-radius: 10px; }
+  .appRow { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-bottom: 1px solid var(--border); font-size: 13px; }
+  .appRow:last-child { border-bottom: none; }
+  .appRow .pkg { flex: 1; word-break: break-all; }
+  .appRow.already { opacity: .4; }
+  .appRow input[type=checkbox] { width: 18px; height: 18px; accent-color: var(--accent); flex-shrink: 0; }
+  .miniTag { font-size: 10px; color: var(--sub); border: 1px solid var(--border); border-radius: 6px; padding: 1px 5px; }
 
-  .toast-box {
-    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-    background: #1f2430; border: 1px solid var(--card-border); color: var(--text);
-    padding: 10px 18px; border-radius: 999px; font-size: 13px; opacity: 0;
-    transition: opacity .2s; pointer-events: none; z-index: 100;
-  }
+  details summary { cursor: pointer; font-size: 12.5px; color: var(--sub); padding: 6px 0; }
+
+  .testStatus { font-size: 13px; color: var(--sub); min-height: 18px; margin-top: 8px; }
+  .testStatus.active { color: var(--accent); }
+  .testStatus.done { color: var(--green); }
+
+  pre#logbox, pre#testlog { background: #0a0c10; border: 1px solid var(--border); border-radius: 12px; padding: 10px; font-size: 11px; line-height: 1.5; overflow-x: auto; white-space: pre-wrap; word-break: break-all; max-height: 50vh; overflow-y: auto; margin: 0; }
+  .l-watcher { color: var(--yellow); }
+  .l-hook { color: var(--pink); }
+  .l-patch { color: var(--green); }
+  .l-error { color: var(--red); }
+
+  .toolbar { display: flex; gap: 8px; margin-bottom: 10px; align-items: center; flex-wrap: wrap; }
+  .toolbar select { flex: 1; min-width: 90px; margin-top: 0; }
+  .toolbar button { width: auto; padding: 9px 12px; flex-shrink: 0; }
+
+  .toast-box { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #1f2430; border: 1px solid var(--border); color: var(--text); padding: 10px 18px; border-radius: 999px; font-size: 13px; opacity: 0; transition: opacity .2s; pointer-events: none; z-index: 100; max-width: 88vw; text-align: center; }
   .toast-box.show { opacity: 1; }
+  .savedTick { font-size: 11px; color: var(--green); opacity: 0; transition: opacity .3s; }
+  .savedTick.show { opacity: 1; }
 </style>
 </head>
 <body>
 
 <header>
-  <h1>BuildType Fix</h1>
-  <div class="sub">Build.TYPE / TAGS / FINGERPRINT 패치 모듈</div>
-  <div class="status-pill"><span class="dot" id="statusDot"></span><span id="statusText">불러오는 중...</span></div>
+  <div class="titleRow">
+    <div>
+      <h1>BuildType Fix</h1>
+      <div class="sub">Build.TYPE / TAGS / FINGERPRINT 패치 모듈</div>
+    </div>
+    <div class="masterSwitch">
+      <span id="masterLabel">모듈</span>
+      <label class="switch big">
+        <input type="checkbox" id="masterToggle">
+        <span class="slider"></span>
+      </label>
+    </div>
+  </div>
+  <div class="statusLine">
+    <span class="pill"><span class="dot" id="dotEnable"></span><span id="txtEnable">-</span></span>
+    <span class="pill"><span class="dot" id="dotType"></span><span id="txtType">-</span></span>
+    <span class="pill"><span class="dot" id="dotTags"></span><span id="txtTags">-</span></span>
+  </div>
 </header>
 
 <div class="tabs">
   <div class="tab active" data-page="config">설정</div>
   <div class="tab" data-page="targets">타겟</div>
+  <div class="tab" data-page="test">테스트</div>
   <div class="tab" data-page="logs">로그</div>
 </div>
 
 <main>
 
-  <!-- 설정 페이지 -->
+  <!-- 설정 -->
   <section class="page active" id="page-config">
     <div class="card">
-      <h2>기본 설정</h2>
+      <h2>Build.TYPE</h2>
       <div class="row">
-        <div>
-          <label>모듈 활성화</label>
-          <div class="hint">ENABLE</div>
-        </div>
-        <label class="switch">
-          <input type="checkbox" id="cfgEnable">
-          <span class="slider"></span>
-        </label>
+        <div><label>패치 사용</label><div class="hint">PATCH_TYPE</div></div>
+        <label class="switch"><input type="checkbox" id="cfgPatchType"><span class="slider"></span></label>
       </div>
-      <div class="row" style="flex-direction: column; align-items: stretch;">
-        <label>Build.TYPE 값</label>
+      <div class="row col">
+        <label>값</label>
         <input type="text" id="cfgBuildType" placeholder="user">
       </div>
-      <div class="row" style="flex-direction: column; align-items: stretch;">
-        <label>Build.TAGS 값</label>
+    </div>
+
+    <div class="card">
+      <h2>Build.TAGS</h2>
+      <div class="row">
+        <div><label>패치 사용</label><div class="hint">PATCH_TAGS</div></div>
+        <label class="switch"><input type="checkbox" id="cfgPatchTags"><span class="slider"></span></label>
+      </div>
+      <div class="row col">
+        <label>값</label>
         <input type="text" id="cfgBuildTags" placeholder="release-keys">
       </div>
     </div>
 
     <div class="card">
       <h2>Fingerprint</h2>
-      <div class="row" style="flex-direction: column; align-items: stretch;">
+      <div class="desc">AUTO면 위의 TYPE/TAGS 설정에 맞춰 fingerprint의 해당 부분만 자동으로 재구성합니다. 나머지(브랜드/기기명/빌드번호 등)는 그대로 유지됩니다.</div>
+      <div class="row col">
         <label>FP_MODE</label>
         <select id="cfgFpMode">
-          <option value="REPLACE_USERDEBUG">REPLACE_USERDEBUG (userdebug→user 치환)</option>
-          <option value="OVERRIDE">OVERRIDE (완전 대체)</option>
+          <option value="AUTO">AUTO (TYPE/TAGS에 맞춰 자동 재구성)</option>
+          <option value="OVERRIDE">OVERRIDE (완전 수동 지정)</option>
           <option value="DISABLED">DISABLED (건드리지 않음)</option>
         </select>
       </div>
-      <div class="row" style="flex-direction: column; align-items: stretch;" id="fpOverrideRow">
+      <div class="row col" id="fpOverrideRow">
         <label>BUILD_FP_OVERRIDE</label>
         <input type="text" id="cfgFpOverride" placeholder="samsung/.../...:user/release-keys">
       </div>
+      <div class="fpPreview" id="fpPreview">미리보기 불러오는 중...</div>
     </div>
 
-    <div class="btn-row">
-      <button class="btn-ghost" id="btnReloadConfig">새로고침</button>
-      <button class="btn-primary" id="btnSaveConfig">저장</button>
+    <div class="row" style="justify-content: flex-end;">
+      <span class="savedTick" id="savedTick">✓ 저장됨</span>
     </div>
   </section>
 
-  <!-- 타겟 페이지 -->
+  <!-- 타겟 -->
   <section class="page" id="page-targets">
     <div class="card">
-      <h2>타겟 프로세스 (targets.txt)</h2>
-      <div class="hint" style="margin-bottom: 8px;">한 줄에 패키지명 하나씩. #으로 시작하면 주석. "pkg:subprocess" 서브프로세스도 자동 매칭됩니다.</div>
-      <textarea id="targetsBox" spellcheck="false"></textarea>
+      <h2>설치된 앱에서 선택</h2>
+      <div class="searchBox">
+        <input type="text" id="appSearch" placeholder="패키지명 검색...">
+        <button class="btn-ghost btn-small" id="btnToggleSystem">시스템앱 포함</button>
+      </div>
+      <div class="appList" id="appList"><div class="appRow"><span class="pkg">불러오는 중...</span></div></div>
+      <div class="btn-row" style="margin-top: 10px;">
+        <button class="btn-primary" id="btnAddSelected">선택한 앱 타겟에 추가</button>
+      </div>
     </div>
-    <div class="btn-row">
-      <button class="btn-ghost" id="btnReloadTargets">새로고침</button>
-      <button class="btn-primary" id="btnSaveTargets">저장</button>
+
+    <div class="card">
+      <details>
+        <summary>고급: targets.txt 직접 편집 (서브프로세스 지정 등)</summary>
+        <div class="desc" style="margin-top: 8px;">한 줄에 패키지명 하나. #으로 시작하면 주석. "pkg:subprocess" 형태로 서브프로세스도 지정 가능.</div>
+        <textarea id="targetsBox" spellcheck="false"></textarea>
+        <div class="btn-row" style="margin-top: 10px;">
+          <button class="btn-ghost" id="btnReloadTargets">새로고침</button>
+          <button class="btn-primary" id="btnSaveTargets">저장</button>
+        </div>
+      </details>
     </div>
   </section>
 
-  <!-- 로그 페이지 -->
+  <!-- 테스트 -->
+  <section class="page" id="page-test">
+    <div class="card">
+      <h2>지금 테스트</h2>
+      <div class="desc">타겟 앱을 강제종료 후 재실행해서 패치 로그를 바로 확인합니다.</div>
+      <div class="row col">
+        <label>테스트할 패키지</label>
+        <select id="testTargetSelect"><option value="">targets.txt에서 선택...</option></select>
+        <input type="text" id="testTargetInput" placeholder="또는 패키지명 직접 입력" style="margin-top: 8px;">
+      </div>
+      <button class="btn-primary" id="btnRunTest" style="margin-top: 12px;">테스트 실행</button>
+      <div class="testStatus" id="testStatus"></div>
+    </div>
+    <div class="card" id="testResultCard" style="display: none;">
+      <h2>결과</h2>
+      <pre id="testlog"></pre>
+    </div>
+  </section>
+
+  <!-- 로그 -->
   <section class="page" id="page-logs">
     <div class="card">
       <div class="toolbar">
@@ -215,17 +239,14 @@
           <option value="hook">NativeHook만</option>
           <option value="patch">Patcher만</option>
         </select>
-        <button class="btn-ghost" id="btnClearLog">지우기</button>
-        <button class="btn-primary" id="btnRefreshLog">새로고침</button>
+        <button class="btn-ghost btn-small" id="btnClearLog">지우기</button>
+        <button class="btn-primary btn-small" id="btnRefreshLog">새로고침</button>
       </div>
       <div class="row" style="border: none; padding: 0 0 10px;">
         <label style="font-size: 13px;">자동 새로고침 (2초)</label>
-        <label class="switch">
-          <input type="checkbox" id="autoRefresh">
-          <span class="slider"></span>
-        </label>
+        <label class="switch"><input type="checkbox" id="autoRefresh"><span class="slider"></span></label>
       </div>
-      <pre id="logbox">로그를 불러오려면 새로고침을 누르세요.</pre>
+      <pre id="logbox">새로고침을 눌러 로그를 불러오세요.</pre>
     </div>
   </section>
 
@@ -239,16 +260,33 @@ import { exec, toast as ksuToast } from 'https://esm.sh/kernelsu@1';
 const MODULE_DIR = '/data/adb/modules/buildtype_fix';
 const CONFIG_PATH = `${MODULE_DIR}/config.txt`;
 const TARGETS_PATH = `${MODULE_DIR}/targets.txt`;
+const DISABLE_FLAG = `${MODULE_DIR}/disable`;
 
 function showToast(msg) {
-  try { ksuToast(msg); } catch (e) { /* WebUI 밖(일반 브라우저)에서 열었을 때 대비 */ }
+  try { ksuToast(msg); } catch (e) {}
   const box = document.getElementById('toastBox');
   box.textContent = msg;
   box.classList.add('show');
-  setTimeout(() => box.classList.remove('show'), 1800);
+  setTimeout(() => box.classList.remove('show'), 1600);
 }
 
-// ---------- 탭 전환 ----------
+function flashSaved() {
+  const t = document.getElementById('savedTick');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 1200);
+}
+
+// safe exec: errno/stdout 없을 때도 안 죽게
+async function safeExec(cmd) {
+  try {
+    const res = await exec(cmd);
+    return { errno: res.errno ?? -1, stdout: res.stdout ?? '', stderr: res.stderr ?? '' };
+  } catch (e) {
+    return { errno: -1, stdout: '', stderr: String(e) };
+  }
+}
+
+// ---------- 탭 ----------
 document.querySelectorAll('.tab').forEach(tab => {
   tab.addEventListener('click', () => {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -256,12 +294,37 @@ document.querySelectorAll('.tab').forEach(tab => {
     tab.classList.add('active');
     document.getElementById('page-' + tab.dataset.page).classList.add('active');
     if (tab.dataset.page === 'logs') refreshLog();
+    if (tab.dataset.page === 'targets') loadAppList();
+    if (tab.dataset.page === 'test') populateTestTargets();
   });
 });
 
-// ---------- 설정 로드/저장 ----------
+// ---------- 모듈 마스터 on/off (KernelSU disable 파일) ----------
+async function loadMasterState() {
+  const { stdout } = await safeExec(`[ -f ${DISABLE_FLAG} ] && echo D || echo E`);
+  const on = !stdout.includes('D');
+  document.getElementById('masterToggle').checked = on;
+}
+async function setMasterState(on) {
+  if (on) {
+    await safeExec(`rm -f ${DISABLE_FLAG}`);
+    showToast('모듈 활성화됨 (재부팅 권장)');
+  } else {
+    await safeExec(`touch ${DISABLE_FLAG}`);
+    showToast('모듈 비활성화됨 (재부팅 권장)');
+  }
+}
+document.getElementById('masterToggle').addEventListener('change', e => setMasterState(e.target.checked));
+
+// ---------- 설정 ----------
+const CFG_DEFAULTS = {
+  ENABLE: '1', PATCH_TYPE: '1', PATCH_TAGS: '1',
+  BUILD_TYPE: 'user', BUILD_TAGS: 'release-keys',
+  FP_MODE: 'AUTO', BUILD_FP_OVERRIDE: ''
+};
+
 function parseConfig(text) {
-  const cfg = { ENABLE: '1', BUILD_TYPE: 'user', BUILD_TAGS: 'release-keys', FP_MODE: 'REPLACE_USERDEBUG', BUILD_FP_OVERRIDE: '' };
+  const cfg = { ...CFG_DEFAULTS };
   text.split('\n').forEach(line => {
     line = line.trim();
     if (!line || line.startsWith('#')) return;
@@ -276,9 +339,10 @@ function parseConfig(text) {
 
 function serializeConfig(cfg) {
   return [
-    '# BuildType Fix Module config',
-    '# 이 파일은 WebUI에서 자동 생성/수정됩니다.',
+    '# BuildType Fix Module config (WebUI가 자동 생성/수정)',
     `ENABLE=${cfg.ENABLE}`,
+    `PATCH_TYPE=${cfg.PATCH_TYPE}`,
+    `PATCH_TAGS=${cfg.PATCH_TAGS}`,
     `BUILD_TYPE=${cfg.BUILD_TYPE}`,
     `BUILD_TAGS=${cfg.BUILD_TAGS}`,
     `FP_MODE=${cfg.FP_MODE}`,
@@ -287,124 +351,334 @@ function serializeConfig(cfg) {
   ].join('\n');
 }
 
-async function loadConfig() {
-  const { errno, stdout } = await exec(`cat ${CONFIG_PATH} 2>/dev/null`);
-  const cfg = errno === 0 ? parseConfig(stdout) : parseConfig('');
-  document.getElementById('cfgEnable').checked = (cfg.ENABLE === '1' || cfg.ENABLE === 'true');
-  document.getElementById('cfgBuildType').value = cfg.BUILD_TYPE;
-  document.getElementById('cfgBuildTags').value = cfg.BUILD_TAGS;
-  document.getElementById('cfgFpMode').value = cfg.FP_MODE;
-  document.getElementById('cfgFpOverride').value = cfg.BUILD_FP_OVERRIDE;
-  updateStatusPill(cfg);
-}
+let originalFingerprint = null;
 
-async function saveConfig() {
-  const cfg = {
-    ENABLE: document.getElementById('cfgEnable').checked ? '1' : '0',
+function readFormConfig() {
+  return {
+    ENABLE: '1', // 개별 필드 토글로 세분화됐으니 항상 켜두고 patch_type/tags로 제어
+    PATCH_TYPE: document.getElementById('cfgPatchType').checked ? '1' : '0',
+    PATCH_TAGS: document.getElementById('cfgPatchTags').checked ? '1' : '0',
     BUILD_TYPE: document.getElementById('cfgBuildType').value.trim() || 'user',
     BUILD_TAGS: document.getElementById('cfgBuildTags').value.trim() || 'release-keys',
     FP_MODE: document.getElementById('cfgFpMode').value,
     BUILD_FP_OVERRIDE: document.getElementById('cfgFpOverride').value.trim(),
   };
+}
+
+function applyConfigToForm(cfg) {
+  document.getElementById('cfgPatchType').checked = (cfg.PATCH_TYPE === '1' || cfg.PATCH_TYPE === 'true');
+  document.getElementById('cfgPatchTags').checked = (cfg.PATCH_TAGS === '1' || cfg.PATCH_TAGS === 'true');
+  document.getElementById('cfgBuildType').value = cfg.BUILD_TYPE;
+  document.getElementById('cfgBuildTags').value = cfg.BUILD_TAGS;
+  document.getElementById('cfgFpMode').value = ['AUTO', 'OVERRIDE', 'DISABLED'].includes(cfg.FP_MODE) ? cfg.FP_MODE : 'AUTO';
+  document.getElementById('cfgFpOverride').value = cfg.BUILD_FP_OVERRIDE;
+  updateFieldStates();
+  updateStatusPills(cfg);
+  updateFpPreview();
+}
+
+function updateFieldStates() {
+  document.getElementById('cfgBuildType').disabled = !document.getElementById('cfgPatchType').checked;
+  document.getElementById('cfgBuildTags').disabled = !document.getElementById('cfgPatchTags').checked;
+  const mode = document.getElementById('cfgFpMode').value;
+  document.getElementById('fpOverrideRow').style.display = mode === 'OVERRIDE' ? 'flex' : 'none';
+}
+
+function updateStatusPills(cfg) {
+  const typeOn = cfg.PATCH_TYPE === '1' || cfg.PATCH_TYPE === 'true';
+  const tagsOn = cfg.PATCH_TAGS === '1' || cfg.PATCH_TAGS === 'true';
+  document.getElementById('dotType').className = 'dot ' + (typeOn ? 'on' : 'off');
+  document.getElementById('txtType').textContent = typeOn ? `TYPE=${cfg.BUILD_TYPE}` : 'TYPE 꺼짐';
+  document.getElementById('dotTags').className = 'dot ' + (tagsOn ? 'on' : 'off');
+  document.getElementById('txtTags').textContent = tagsOn ? `TAGS=${cfg.BUILD_TAGS}` : 'TAGS 꺼짐';
+}
+
+async function updateEnablePill() {
+  const { stdout } = await safeExec(`[ -f ${DISABLE_FLAG} ] && echo D || echo E`);
+  const on = !stdout.includes('D');
+  document.getElementById('dotEnable').className = 'dot ' + (on ? 'on' : 'off');
+  document.getElementById('txtEnable').textContent = on ? '모듈 켜짐' : '모듈 꺼짐';
+}
+
+// fingerprint 미리보기: 실제 원본 fingerprint에서 TYPE/TAGS 세그먼트만 현재 폼 값으로 치환
+async function loadOriginalFingerprint() {
+  const { errno, stdout } = await safeExec('getprop ro.build.fingerprint');
+  if (errno === 0 && stdout.trim()) originalFingerprint = stdout.trim();
+}
+
+function updateFpPreview() {
+  const box = document.getElementById('fpPreview');
+  const mode = document.getElementById('cfgFpMode').value;
+  if (mode === 'DISABLED') { box.innerHTML = '패치 안 함 (기기 원본 fingerprint 그대로 유지)'; return; }
+  if (mode === 'OVERRIDE') {
+    const v = document.getElementById('cfgFpOverride').value.trim();
+    box.innerHTML = v ? `<b>${escapeHtml(v)}</b>` : '값을 입력하세요';
+    return;
+  }
+  if (!originalFingerprint) { box.textContent = '원본 fingerprint를 불러오는 중...'; return; }
+  const lastColon = originalFingerprint.lastIndexOf(':');
+  const lastSlash = originalFingerprint.lastIndexOf('/');
+  if (lastColon === -1 || lastSlash === -1 || lastSlash < lastColon) {
+    box.textContent = '원본 fingerprint 형식을 해석할 수 없음: ' + originalFingerprint;
+    return;
+  }
+  const head = originalFingerprint.slice(0, lastColon + 1);
+  const origType = originalFingerprint.slice(lastColon + 1, lastSlash);
+  const origTags = originalFingerprint.slice(lastSlash + 1);
+  const typeOn = document.getElementById('cfgPatchType').checked;
+  const tagsOn = document.getElementById('cfgPatchTags').checked;
+  const newType = typeOn ? (document.getElementById('cfgBuildType').value.trim() || 'user') : origType;
+  const newTags = tagsOn ? (document.getElementById('cfgBuildTags').value.trim() || 'release-keys') : origTags;
+  box.innerHTML = escapeHtml(head) + '<b>' + escapeHtml(newType) + '/' + escapeHtml(newTags) + '</b>';
+}
+
+function escapeHtml(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
+
+async function loadConfig() {
+  const { errno, stdout } = await safeExec(`cat ${CONFIG_PATH} 2>/dev/null`);
+  const cfg = errno === 0 ? parseConfig(stdout) : { ...CFG_DEFAULTS };
+  applyConfigToForm(cfg);
+}
+
+let saveTimer = null;
+function scheduleSave() {
+  updateFieldStates();
+  updateFpPreview();
+  updateStatusPills(readFormConfig());
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveConfig, 400); // 자동 저장 (디바운스)
+}
+
+async function saveConfig() {
+  const cfg = readFormConfig();
   const content = serializeConfig(cfg);
-  // heredoc으로 안전하게 파일 씀 (특수문자 이슈 방지)
   const cmd = `cat > ${CONFIG_PATH} << 'BTFIX_EOF'\n${content}\nBTFIX_EOF`;
-  const { errno } = await exec(cmd);
-  if (errno === 0) {
-    showToast('설정 저장됨. 재부팅 또는 앱 재시작 후 반영');
-    updateStatusPill(cfg);
-  } else {
-    showToast('저장 실패 (errno ' + errno + ')');
+  const { errno } = await safeExec(cmd);
+  if (errno === 0) flashSaved();
+  else showToast('저장 실패 (errno ' + errno + ')');
+}
+
+['cfgPatchType', 'cfgPatchTags', 'cfgBuildType', 'cfgBuildTags', 'cfgFpMode', 'cfgFpOverride'].forEach(id => {
+  const el = document.getElementById(id);
+  el.addEventListener('input', scheduleSave);
+  el.addEventListener('change', scheduleSave);
+});
+
+// ---------- 타겟: targets.txt 원본 ----------
+async function loadTargets() {
+  const { errno, stdout } = await safeExec(`cat ${TARGETS_PATH} 2>/dev/null`);
+  document.getElementById('targetsBox').value = errno === 0 ? stdout : '';
+  return errno === 0 ? stdout : '';
+}
+async function saveTargets(content) {
+  const cmd = `cat > ${TARGETS_PATH} << 'BTFIX_EOF'\n${content}\nBTFIX_EOF`;
+  const { errno } = await safeExec(cmd);
+  return errno === 0;
+}
+document.getElementById('btnReloadTargets').addEventListener('click', loadTargets);
+document.getElementById('btnSaveTargets').addEventListener('click', async () => {
+  const ok = await saveTargets(document.getElementById('targetsBox').value);
+  showToast(ok ? '타겟 목록 저장됨' : '저장 실패');
+});
+
+// ---------- 타겟: 설치된 앱 목록 ----------
+let includeSystemApps = false;
+let installedApps = [];
+let currentTargetLines = [];
+
+document.getElementById('btnToggleSystem').addEventListener('click', () => {
+  includeSystemApps = !includeSystemApps;
+  document.getElementById('btnToggleSystem').textContent = includeSystemApps ? '3rd-party만 보기' : '시스템앱 포함';
+  loadAppList();
+});
+
+async function loadAppList() {
+  const listEl = document.getElementById('appList');
+  listEl.innerHTML = '<div class="appRow"><span class="pkg">불러오는 중...</span></div>';
+
+  const targetsRaw = await loadTargets();
+  currentTargetLines = targetsRaw.split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('#'));
+
+  const cmd = includeSystemApps ? 'pm list packages' : 'pm list packages -3';
+  const { errno, stdout } = await safeExec(cmd);
+  if (errno !== 0) {
+    listEl.innerHTML = '<div class="appRow"><span class="pkg">앱 목록을 못 가져옴 (pm list packages 실패)</span></div>';
+    return;
+  }
+  installedApps = stdout.split('\n')
+    .map(l => l.replace(/^package:/, '').trim())
+    .filter(Boolean)
+    .sort((a, b) => a.localeCompare(b));
+
+  renderAppList();
+}
+
+function renderAppList() {
+  const q = document.getElementById('appSearch').value.trim().toLowerCase();
+  const listEl = document.getElementById('appList');
+  const filtered = q ? installedApps.filter(p => p.toLowerCase().includes(q)) : installedApps;
+  const slice = filtered.slice(0, 300); // 너무 길면 렉 걸리니 상한
+
+  if (slice.length === 0) {
+    listEl.innerHTML = '<div class="appRow"><span class="pkg">검색 결과 없음</span></div>';
+    return;
+  }
+
+  listEl.innerHTML = slice.map(pkg => {
+    const already = currentTargetLines.some(l => l === pkg || l.startsWith(pkg + ':'));
+    return `<div class="appRow ${already ? 'already' : ''}">
+      <input type="checkbox" class="appCheck" data-pkg="${escapeHtml(pkg)}" ${already ? 'disabled' : ''}>
+      <span class="pkg">${escapeHtml(pkg)}</span>
+      ${already ? '<span class="miniTag">등록됨</span>' : ''}
+    </div>`;
+  }).join('');
+
+  if (filtered.length > slice.length) {
+    listEl.innerHTML += `<div class="appRow"><span class="pkg" style="color: var(--sub);">+ ${filtered.length - slice.length}개 더 있음, 검색으로 좁혀보세요</span></div>`;
   }
 }
 
-function updateStatusPill(cfg) {
-  const on = (cfg.ENABLE === '1' || cfg.ENABLE === 'true');
-  const dot = document.getElementById('statusDot');
-  const text = document.getElementById('statusText');
-  dot.className = 'dot ' + (on ? 'on' : 'off');
-  text.textContent = on
-    ? `활성화됨 · TYPE=${cfg.BUILD_TYPE} · TAGS=${cfg.BUILD_TAGS}`
-    : '비활성화됨';
+document.getElementById('appSearch').addEventListener('input', renderAppList);
+
+document.getElementById('btnAddSelected').addEventListener('click', async () => {
+  const checked = [...document.querySelectorAll('.appCheck:checked')].map(el => el.dataset.pkg);
+  if (checked.length === 0) { showToast('선택된 앱이 없습니다'); return; }
+
+  const existing = await loadTargets();
+  const lines = existing.split('\n');
+  const toAdd = checked.filter(pkg => !currentTargetLines.includes(pkg));
+  const newContent = (existing.trimEnd() + '\n' + toAdd.join('\n') + '\n').replace(/\n{3,}/g, '\n\n');
+
+  const ok = await saveTargets(newContent);
+  if (ok) {
+    showToast(`${toAdd.length}개 타겟에 추가됨`);
+    document.getElementById('targetsBox').value = newContent;
+    loadAppList();
+  } else {
+    showToast('저장 실패');
+  }
+});
+
+// ---------- 테스트 ----------
+async function populateTestTargets() {
+  const targetsRaw = await loadTargets();
+  const lines = targetsRaw.split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('#'));
+  const sel = document.getElementById('testTargetSelect');
+  sel.innerHTML = '<option value="">targets.txt에서 선택...</option>' +
+    lines.map(l => `<option value="${escapeHtml(l.split(':')[0])}">${escapeHtml(l)}</option>`).join('');
 }
 
-// ---------- 타겟 로드/저장 ----------
-async function loadTargets() {
-  const { errno, stdout } = await exec(`cat ${TARGETS_PATH} 2>/dev/null`);
-  document.getElementById('targetsBox').value = errno === 0 ? stdout : '';
+document.getElementById('testTargetSelect').addEventListener('change', e => {
+  if (e.target.value) document.getElementById('testTargetInput').value = e.target.value;
+});
+
+function setTestStatus(text, cls) {
+  const el = document.getElementById('testStatus');
+  el.textContent = text;
+  el.className = 'testStatus' + (cls ? ' ' + cls : '');
 }
 
-async function saveTargets() {
-  const content = document.getElementById('targetsBox').value;
-  const cmd = `cat > ${TARGETS_PATH} << 'BTFIX_EOF'\n${content}\nBTFIX_EOF`;
-  const { errno } = await exec(cmd);
-  showToast(errno === 0 ? '타겟 목록 저장됨' : '저장 실패 (errno ' + errno + ')');
-}
+document.getElementById('btnRunTest').addEventListener('click', async () => {
+  const pkg = document.getElementById('testTargetInput').value.trim() || document.getElementById('testTargetSelect').value;
+  if (!pkg) { showToast('테스트할 패키지를 선택하거나 입력하세요'); return; }
+
+  const btn = document.getElementById('btnRunTest');
+  btn.disabled = true;
+  document.getElementById('testResultCard').style.display = 'block';
+  const testlog = document.getElementById('testlog');
+  testlog.textContent = '';
+
+  try {
+    setTestStatus('앱 종료 중...', 'active');
+    await safeExec(`am force-stop ${pkg}`);
+    await safeExec('logcat -c');
+    await new Promise(r => setTimeout(r, 400));
+
+    setTestStatus('앱 실행 중... (' + pkg + ')', 'active');
+    const launch = await safeExec(`monkey -p ${pkg} -c android.intent.category.LAUNCHER 1 2>&1`);
+    if (launch.errno !== 0 && !launch.stdout.includes('Events injected')) {
+      testlog.textContent = '앱 실행 실패:\n' + (launch.stdout || launch.stderr);
+      setTestStatus('실행 실패 - 패키지명 확인해보세요', 'done');
+      btn.disabled = false;
+      return;
+    }
+
+    setTestStatus('로그 대기 중...', 'active');
+    await new Promise(r => setTimeout(r, 2500));
+
+    setTestStatus('로그 확인 중...', 'active');
+    const { stdout } = await safeExec(`logcat -d -s BuildTypeFix 2>&1`);
+    const lines = stdout.split('\n').filter(l => l.includes('BuildTypeFix'));
+
+    if (lines.length === 0) {
+      testlog.textContent = '패치 로그가 안 찍혔습니다.\n\n확인할 것:\n- 이 패키지가 targets.txt에 등록돼 있는지\n- 모듈이 활성화(켜짐) 상태인지\n- 방금 재부팅 없이 모듈을 새로 설치/수정했다면 재부팅 필요';
+      setTestStatus('로그 없음', 'done');
+    } else {
+      testlog.innerHTML = lines.map(colorizeLine).join('\n');
+      const hasPatch = lines.some(l => l.includes('[Patcher]'));
+      setTestStatus(hasPatch ? '완료 - 패치 로그 확인됨' : '완료 - 매칭은 됐지만 패치 로그는 없음', 'done');
+    }
+  } finally {
+    btn.disabled = false;
+  }
+});
 
 // ---------- 로그 ----------
 let autoRefreshTimer = null;
 
-function classifyLine(line) {
-  if (/\[Watcher\]/.test(line)) return 'log-line-watcher';
-  if (/\[NativeHook\]/.test(line)) return 'log-line-hook';
-  if (/\[Patcher\]|\[Zygisk\]|\[Match\]|\[Config\]/.test(line)) return 'log-line-patch';
-  if (/error|fail|E BuildTypeFix/i.test(line)) return 'log-line-error';
-  return '';
+function colorizeLine(line) {
+  const esc = escapeHtml(line);
+  if (/\[Watcher\]/.test(line)) return `<span class="l-watcher">${esc}</span>`;
+  if (/\[NativeHook\]/.test(line)) return `<span class="l-hook">${esc}</span>`;
+  if (/\[Patcher\]|\[Zygisk\]|\[Match\]|\[Config\]/.test(line)) return `<span class="l-patch">${esc}</span>`;
+  if (/error|fail/i.test(line)) return `<span class="l-error">${esc}</span>`;
+  return esc;
 }
 
 async function refreshLog() {
   const filter = document.getElementById('logFilter').value;
-  const { errno, stdout } = await exec(`logcat -d -s BuildTypeFix -t 400 2>/dev/null`);
   const box = document.getElementById('logbox');
-  if (errno !== 0 || !stdout || !stdout.trim()) {
-    box.textContent = '로그가 없습니다. 앱을 실행해서 패치가 트리거되게 해보세요.';
+  const { errno, stdout, stderr } = await safeExec(`logcat -d -s BuildTypeFix 2>&1`);
+
+  if (errno !== 0) {
+    box.textContent = `logcat 실행 실패 (errno ${errno})\n${stderr || stdout}`;
     return;
   }
   let lines = stdout.split('\n').filter(l => l.includes('BuildTypeFix'));
+  if (lines.length === 0) {
+    box.textContent = '로그가 없습니다.\n\n- 타겟 앱을 아직 실행한 적이 없거나\n- logcat 버퍼가 그 사이 비워졌을 수 있습니다.\n"테스트" 탭에서 바로 실행해보세요.';
+    return;
+  }
   if (filter === 'watcher') lines = lines.filter(l => l.includes('[Watcher]'));
   else if (filter === 'hook') lines = lines.filter(l => l.includes('[NativeHook]'));
-  else if (filter === 'patch') lines = lines.filter(l => l.includes('[Patcher]') || l.includes('[Zygisk]') || l.includes('[Match]') || l.includes('[Config]'));
+  else if (filter === 'patch') lines = lines.filter(l => /\[Patcher\]|\[Zygisk\]|\[Match\]|\[Config\]/.test(l));
 
-  box.innerHTML = lines.map(l => {
-    const cls = classifyLine(l);
-    const esc = l.replace(/&/g, '&amp;').replace(/</g, '&lt;');
-    return cls ? `<span class="${cls}">${esc}</span>` : esc;
-  }).join('\n') || '(필터에 해당하는 로그 없음)';
+  box.innerHTML = lines.length ? lines.map(colorizeLine).join('\n') : '(필터에 해당하는 로그 없음)';
   box.scrollTop = box.scrollHeight;
 }
 
 async function clearLog() {
-  await exec('logcat -c');
+  await safeExec('logcat -c');
   document.getElementById('logbox').textContent = '로그 버퍼를 비웠습니다.';
   showToast('logcat 버퍼 초기화됨');
 }
 
-document.getElementById('autoRefresh').addEventListener('change', (e) => {
-  if (e.target.checked) {
-    autoRefreshTimer = setInterval(refreshLog, 2000);
-  } else {
-    clearInterval(autoRefreshTimer);
-  }
+document.getElementById('autoRefresh').addEventListener('change', e => {
+  clearInterval(autoRefreshTimer);
+  if (e.target.checked) autoRefreshTimer = setInterval(refreshLog, 2000);
 });
-
-document.getElementById('cfgFpMode').addEventListener('change', (e) => {
-  document.getElementById('fpOverrideRow').style.display =
-    e.target.value === 'OVERRIDE' ? 'flex' : 'flex'; // 항상 보이되, DISABLED일 때만 흐리게
-  document.getElementById('fpOverrideRow').style.opacity =
-    e.target.value === 'DISABLED' ? '0.4' : '1';
-});
-
-document.getElementById('btnReloadConfig').addEventListener('click', loadConfig);
-document.getElementById('btnSaveConfig').addEventListener('click', saveConfig);
-document.getElementById('btnReloadTargets').addEventListener('click', loadTargets);
-document.getElementById('btnSaveTargets').addEventListener('click', saveTargets);
 document.getElementById('btnRefreshLog').addEventListener('click', refreshLog);
 document.getElementById('btnClearLog').addEventListener('click', clearLog);
 document.getElementById('logFilter').addEventListener('change', refreshLog);
 
 // ---------- 초기화 ----------
-loadConfig();
-loadTargets();
+(async () => {
+  await loadMasterState();
+  await updateEnablePill();
+  await loadOriginalFingerprint();
+  await loadConfig();
+  await loadTargets();
+})();
 </script>
 
 </body>
