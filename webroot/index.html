@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>BuildType Fix</title>
+<style>
+  :root {
+    --bg: #0f1115;
+    --card: #171a21;
+    --card-border: #262b36;
+    --text: #e6e8ec;
+    --sub: #8a92a3;
+    --accent: #4c8dff;
+    --green: #34d399;
+    --red: #f87171;
+    --yellow: #fbbf24;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, Roboto, "Segoe UI", sans-serif;
+    padding-bottom: 32px;
+  }
+  header {
+    padding: 20px 16px 12px;
+    position: sticky; top: 0;
+    background: linear-gradient(180deg, var(--bg) 80%, transparent);
+    z-index: 10;
+  }
+  header h1 { font-size: 20px; margin: 0 0 4px; }
+  header .sub { color: var(--sub); font-size: 13px; }
+  .status-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 10px; border-radius: 999px;
+    background: var(--card); border: 1px solid var(--card-border);
+    font-size: 12px; margin-top: 8px;
+  }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--sub); }
+  .dot.on { background: var(--green); }
+  .dot.off { background: var(--red); }
+
+  .tabs {
+    display: flex; gap: 6px; padding: 0 16px 12px;
+    position: sticky; top: 64px; background: var(--bg); z-index: 9;
+  }
+  .tab {
+    flex: 1; text-align: center; padding: 10px 0; border-radius: 10px;
+    background: var(--card); border: 1px solid var(--card-border);
+    font-size: 13px; color: var(--sub); cursor: pointer; user-select: none;
+  }
+  .tab.active { color: var(--text); border-color: var(--accent); background: #16233d; }
+
+  main { padding: 0 16px; }
+  .page { display: none; }
+  .page.active { display: block; }
+
+  .card {
+    background: var(--card); border: 1px solid var(--card-border);
+    border-radius: 14px; padding: 16px; margin-bottom: 14px;
+  }
+  .card h2 { font-size: 14px; margin: 0 0 12px; color: var(--sub); font-weight: 600; text-transform: uppercase; letter-spacing: .03em; }
+
+  .row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--card-border); }
+  .row:last-child { border-bottom: none; }
+  .row label { font-size: 14px; }
+  .row .hint { font-size: 12px; color: var(--sub); margin-top: 2px; }
+
+  input[type=text] {
+    width: 100%; background: #0d1015; border: 1px solid var(--card-border);
+    color: var(--text); padding: 10px 12px; border-radius: 10px; font-size: 14px;
+    margin-top: 6px;
+  }
+  textarea {
+    width: 100%; min-height: 140px; background: #0d1015; border: 1px solid var(--card-border);
+    color: var(--text); padding: 10px 12px; border-radius: 10px; font-size: 13px;
+    font-family: ui-monospace, monospace; resize: vertical; margin-top: 6px;
+  }
+
+  .switch { position: relative; width: 46px; height: 26px; flex-shrink: 0; }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .slider {
+    position: absolute; inset: 0; background: #2a2f3a; border-radius: 999px;
+    transition: .15s; cursor: pointer;
+  }
+  .slider::before {
+    content: ""; position: absolute; width: 20px; height: 20px; left: 3px; top: 3px;
+    background: #fff; border-radius: 50%; transition: .15s;
+  }
+  .switch input:checked + .slider { background: var(--accent); }
+  .switch input:checked + .slider::before { transform: translateX(20px); }
+
+  select {
+    background: #0d1015; border: 1px solid var(--card-border); color: var(--text);
+    padding: 8px 10px; border-radius: 10px; font-size: 13px; margin-top: 6px; width: 100%;
+  }
+
+  button {
+    border: none; border-radius: 12px; padding: 13px 16px; font-size: 14px; font-weight: 600;
+    width: 100%; cursor: pointer;
+  }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-ghost { background: var(--card); color: var(--text); border: 1px solid var(--card-border); }
+  .btn-row { display: flex; gap: 8px; }
+  .btn-row button { flex: 1; }
+
+  pre#logbox {
+    background: #0a0c10; border: 1px solid var(--card-border); border-radius: 12px;
+    padding: 10px; font-size: 11px; line-height: 1.5; overflow-x: auto;
+    white-space: pre-wrap; word-break: break-all; max-height: 55vh; overflow-y: auto;
+    margin: 0;
+  }
+  .log-line-watcher { color: var(--yellow); }
+  .log-line-hook { color: #f472b6; }
+  .log-line-patch { color: var(--green); }
+  .log-line-error { color: var(--red); }
+
+  .toolbar { display: flex; gap: 8px; margin-bottom: 10px; align-items: center; }
+  .toolbar select { flex: 1; margin-top: 0; }
+  .toolbar button { width: auto; padding: 10px 14px; flex-shrink: 0; }
+
+  .toast-box {
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+    background: #1f2430; border: 1px solid var(--card-border); color: var(--text);
+    padding: 10px 18px; border-radius: 999px; font-size: 13px; opacity: 0;
+    transition: opacity .2s; pointer-events: none; z-index: 100;
+  }
+  .toast-box.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>BuildType Fix</h1>
+  <div class="sub">Build.TYPE / TAGS / FINGERPRINT 패치 모듈</div>
+  <div class="status-pill"><span class="dot" id="statusDot"></span><span id="statusText">불러오는 중...</span></div>
+</header>
+
+<div class="tabs">
+  <div class="tab active" data-page="config">설정</div>
+  <div class="tab" data-page="targets">타겟</div>
+  <div class="tab" data-page="logs">로그</div>
+</div>
+
+<main>
+
+  <!-- 설정 페이지 -->
+  <section class="page active" id="page-config">
+    <div class="card">
+      <h2>기본 설정</h2>
+      <div class="row">
+        <div>
+          <label>모듈 활성화</label>
+          <div class="hint">ENABLE</div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="cfgEnable">
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="row" style="flex-direction: column; align-items: stretch;">
+        <label>Build.TYPE 값</label>
+        <input type="text" id="cfgBuildType" placeholder="user">
+      </div>
+      <div class="row" style="flex-direction: column; align-items: stretch;">
+        <label>Build.TAGS 값</label>
+        <input type="text" id="cfgBuildTags" placeholder="release-keys">
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Fingerprint</h2>
+      <div class="row" style="flex-direction: column; align-items: stretch;">
+        <label>FP_MODE</label>
+        <select id="cfgFpMode">
+          <option value="REPLACE_USERDEBUG">REPLACE_USERDEBUG (userdebug→user 치환)</option>
+          <option value="OVERRIDE">OVERRIDE (완전 대체)</option>
+          <option value="DISABLED">DISABLED (건드리지 않음)</option>
+        </select>
+      </div>
+      <div class="row" style="flex-direction: column; align-items: stretch;" id="fpOverrideRow">
+        <label>BUILD_FP_OVERRIDE</label>
+        <input type="text" id="cfgFpOverride" placeholder="samsung/.../...:user/release-keys">
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-ghost" id="btnReloadConfig">새로고침</button>
+      <button class="btn-primary" id="btnSaveConfig">저장</button>
+    </div>
+  </section>
+
+  <!-- 타겟 페이지 -->
+  <section class="page" id="page-targets">
+    <div class="card">
+      <h2>타겟 프로세스 (targets.txt)</h2>
+      <div class="hint" style="margin-bottom: 8px;">한 줄에 패키지명 하나씩. #으로 시작하면 주석. "pkg:subprocess" 서브프로세스도 자동 매칭됩니다.</div>
+      <textarea id="targetsBox" spellcheck="false"></textarea>
+    </div>
+    <div class="btn-row">
+      <button class="btn-ghost" id="btnReloadTargets">새로고침</button>
+      <button class="btn-primary" id="btnSaveTargets">저장</button>
+    </div>
+  </section>
+
+  <!-- 로그 페이지 -->
+  <section class="page" id="page-logs">
+    <div class="card">
+      <div class="toolbar">
+        <select id="logFilter">
+          <option value="all">전체</option>
+          <option value="watcher">Watcher만</option>
+          <option value="hook">NativeHook만</option>
+          <option value="patch">Patcher만</option>
+        </select>
+        <button class="btn-ghost" id="btnClearLog">지우기</button>
+        <button class="btn-primary" id="btnRefreshLog">새로고침</button>
+      </div>
+      <div class="row" style="border: none; padding: 0 0 10px;">
+        <label style="font-size: 13px;">자동 새로고침 (2초)</label>
+        <label class="switch">
+          <input type="checkbox" id="autoRefresh">
+          <span class="slider"></span>
+        </label>
+      </div>
+      <pre id="logbox">로그를 불러오려면 새로고침을 누르세요.</pre>
+    </div>
+  </section>
+
+</main>
+
+<div class="toast-box" id="toastBox"></div>
+
+<script type="module">
+import { exec, toast as ksuToast } from 'https://esm.sh/kernelsu@1';
+
+const MODULE_DIR = '/data/adb/modules/buildtype_fix';
+const CONFIG_PATH = `${MODULE_DIR}/config.txt`;
+const TARGETS_PATH = `${MODULE_DIR}/targets.txt`;
+
+function showToast(msg) {
+  try { ksuToast(msg); } catch (e) { /* WebUI 밖(일반 브라우저)에서 열었을 때 대비 */ }
+  const box = document.getElementById('toastBox');
+  box.textContent = msg;
+  box.classList.add('show');
+  setTimeout(() => box.classList.remove('show'), 1800);
+}
+
+// ---------- 탭 전환 ----------
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('page-' + tab.dataset.page).classList.add('active');
+    if (tab.dataset.page === 'logs') refreshLog();
+  });
+});
+
+// ---------- 설정 로드/저장 ----------
+function parseConfig(text) {
+  const cfg = { ENABLE: '1', BUILD_TYPE: 'user', BUILD_TAGS: 'release-keys', FP_MODE: 'REPLACE_USERDEBUG', BUILD_FP_OVERRIDE: '' };
+  text.split('\n').forEach(line => {
+    line = line.trim();
+    if (!line || line.startsWith('#')) return;
+    const idx = line.indexOf('=');
+    if (idx === -1) return;
+    const key = line.slice(0, idx).trim();
+    const val = line.slice(idx + 1).trim();
+    if (key in cfg) cfg[key] = val;
+  });
+  return cfg;
+}
+
+function serializeConfig(cfg) {
+  return [
+    '# BuildType Fix Module config',
+    '# 이 파일은 WebUI에서 자동 생성/수정됩니다.',
+    `ENABLE=${cfg.ENABLE}`,
+    `BUILD_TYPE=${cfg.BUILD_TYPE}`,
+    `BUILD_TAGS=${cfg.BUILD_TAGS}`,
+    `FP_MODE=${cfg.FP_MODE}`,
+    `BUILD_FP_OVERRIDE=${cfg.BUILD_FP_OVERRIDE}`,
+    ''
+  ].join('\n');
+}
+
+async function loadConfig() {
+  const { errno, stdout } = await exec(`cat ${CONFIG_PATH} 2>/dev/null`);
+  const cfg = errno === 0 ? parseConfig(stdout) : parseConfig('');
+  document.getElementById('cfgEnable').checked = (cfg.ENABLE === '1' || cfg.ENABLE === 'true');
+  document.getElementById('cfgBuildType').value = cfg.BUILD_TYPE;
+  document.getElementById('cfgBuildTags').value = cfg.BUILD_TAGS;
+  document.getElementById('cfgFpMode').value = cfg.FP_MODE;
+  document.getElementById('cfgFpOverride').value = cfg.BUILD_FP_OVERRIDE;
+  updateStatusPill(cfg);
+}
+
+async function saveConfig() {
+  const cfg = {
+    ENABLE: document.getElementById('cfgEnable').checked ? '1' : '0',
+    BUILD_TYPE: document.getElementById('cfgBuildType').value.trim() || 'user',
+    BUILD_TAGS: document.getElementById('cfgBuildTags').value.trim() || 'release-keys',
+    FP_MODE: document.getElementById('cfgFpMode').value,
+    BUILD_FP_OVERRIDE: document.getElementById('cfgFpOverride').value.trim(),
+  };
+  const content = serializeConfig(cfg);
+  // heredoc으로 안전하게 파일 씀 (특수문자 이슈 방지)
+  const cmd = `cat > ${CONFIG_PATH} << 'BTFIX_EOF'\n${content}\nBTFIX_EOF`;
+  const { errno } = await exec(cmd);
+  if (errno === 0) {
+    showToast('설정 저장됨. 재부팅 또는 앱 재시작 후 반영');
+    updateStatusPill(cfg);
+  } else {
+    showToast('저장 실패 (errno ' + errno + ')');
+  }
+}
+
+function updateStatusPill(cfg) {
+  const on = (cfg.ENABLE === '1' || cfg.ENABLE === 'true');
+  const dot = document.getElementById('statusDot');
+  const text = document.getElementById('statusText');
+  dot.className = 'dot ' + (on ? 'on' : 'off');
+  text.textContent = on
+    ? `활성화됨 · TYPE=${cfg.BUILD_TYPE} · TAGS=${cfg.BUILD_TAGS}`
+    : '비활성화됨';
+}
+
+// ---------- 타겟 로드/저장 ----------
+async function loadTargets() {
+  const { errno, stdout } = await exec(`cat ${TARGETS_PATH} 2>/dev/null`);
+  document.getElementById('targetsBox').value = errno === 0 ? stdout : '';
+}
+
+async function saveTargets() {
+  const content = document.getElementById('targetsBox').value;
+  const cmd = `cat > ${TARGETS_PATH} << 'BTFIX_EOF'\n${content}\nBTFIX_EOF`;
+  const { errno } = await exec(cmd);
+  showToast(errno === 0 ? '타겟 목록 저장됨' : '저장 실패 (errno ' + errno + ')');
+}
+
+// ---------- 로그 ----------
+let autoRefreshTimer = null;
+
+function classifyLine(line) {
+  if (/\[Watcher\]/.test(line)) return 'log-line-watcher';
+  if (/\[NativeHook\]/.test(line)) return 'log-line-hook';
+  if (/\[Patcher\]|\[Zygisk\]|\[Match\]|\[Config\]/.test(line)) return 'log-line-patch';
+  if (/error|fail|E BuildTypeFix/i.test(line)) return 'log-line-error';
+  return '';
+}
+
+async function refreshLog() {
+  const filter = document.getElementById('logFilter').value;
+  const { errno, stdout } = await exec(`logcat -d -s BuildTypeFix -t 400 2>/dev/null`);
+  const box = document.getElementById('logbox');
+  if (errno !== 0 || !stdout || !stdout.trim()) {
+    box.textContent = '로그가 없습니다. 앱을 실행해서 패치가 트리거되게 해보세요.';
+    return;
+  }
+  let lines = stdout.split('\n').filter(l => l.includes('BuildTypeFix'));
+  if (filter === 'watcher') lines = lines.filter(l => l.includes('[Watcher]'));
+  else if (filter === 'hook') lines = lines.filter(l => l.includes('[NativeHook]'));
+  else if (filter === 'patch') lines = lines.filter(l => l.includes('[Patcher]') || l.includes('[Zygisk]') || l.includes('[Match]') || l.includes('[Config]'));
+
+  box.innerHTML = lines.map(l => {
+    const cls = classifyLine(l);
+    const esc = l.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+    return cls ? `<span class="${cls}">${esc}</span>` : esc;
+  }).join('\n') || '(필터에 해당하는 로그 없음)';
+  box.scrollTop = box.scrollHeight;
+}
+
+async function clearLog() {
+  await exec('logcat -c');
+  document.getElementById('logbox').textContent = '로그 버퍼를 비웠습니다.';
+  showToast('logcat 버퍼 초기화됨');
+}
+
+document.getElementById('autoRefresh').addEventListener('change', (e) => {
+  if (e.target.checked) {
+    autoRefreshTimer = setInterval(refreshLog, 2000);
+  } else {
+    clearInterval(autoRefreshTimer);
+  }
+});
+
+document.getElementById('cfgFpMode').addEventListener('change', (e) => {
+  document.getElementById('fpOverrideRow').style.display =
+    e.target.value === 'OVERRIDE' ? 'flex' : 'flex'; // 항상 보이되, DISABLED일 때만 흐리게
+  document.getElementById('fpOverrideRow').style.opacity =
+    e.target.value === 'DISABLED' ? '0.4' : '1';
+});
+
+document.getElementById('btnReloadConfig').addEventListener('click', loadConfig);
+document.getElementById('btnSaveConfig').addEventListener('click', saveConfig);
+document.getElementById('btnReloadTargets').addEventListener('click', loadTargets);
+document.getElementById('btnSaveTargets').addEventListener('click', saveTargets);
+document.getElementById('btnRefreshLog').addEventListener('click', refreshLog);
+document.getElementById('btnClearLog').addEventListener('click', clearLog);
+document.getElementById('logFilter').addEventListener('change', refreshLog);
+
+// ---------- 초기화 ----------
+loadConfig();
+loadTargets();
+</script>
+
+</body>
+</html>
