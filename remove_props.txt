@@ -1,0 +1,15 @@
+# 부팅 시 resetprop --delete로 제거할 프로퍼티 목록
+# WebUI의 "프로퍼티" 탭에서 편집 가능합니다.
+#
+# 형식 1: 정확한 프로퍼티명 한 줄에 하나
+#   ro.lineage.version
+#
+# 형식 2: *부분문자열* — getprop 키에 그 문자열이 포함되면 전부 삭제
+#   *lineage*
+#
+# 예시 (필요하면 주석 해제):
+# ro.lineage.build.version
+# ro.lineage.device
+# ro.lineage.releasetype
+# ro.lineage.version
+# *lineage*

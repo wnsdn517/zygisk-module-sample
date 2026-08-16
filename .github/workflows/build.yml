@@ -75,6 +75,8 @@ jobs:
           [ -f targets.txt ] && cp targets.txt out/buildtype_fix/targets.txt
           [ -f config.txt ] && cp config.txt out/buildtype_fix/config.txt
           [ -f customize.sh ] && cp customize.sh out/buildtype_fix/customize.sh
+          [ -f service.sh ] && cp service.sh out/buildtype_fix/service.sh
+          [ -f remove_props.txt ] && cp remove_props.txt out/buildtype_fix/remove_props.txt
           [ -d webroot ] && cp -r webroot out/buildtype_fix/webroot
 
           find module/build -name "*.so" | while read f; do

@@ -27,6 +27,7 @@ struct ModuleConfig {
     std::string build_tags = "release-keys";
     FingerprintMode fp_mode = FingerprintMode::AUTO;
     std::string fp_override = "";
+    bool debug_mode = false;  // true일 때만 Watcher/NativeHook(진단용) 설치
 };
 
 class ConfigManager {
@@ -70,6 +71,8 @@ public:
                 else cfg.fp_mode = FingerprintMode::AUTO;
             } else if (key == "BUILD_FP_OVERRIDE") {
                 cfg.fp_override = val;
+            } else if (key == "DEBUG_MODE") {
+                cfg.debug_mode = (val == "1" || val == "true");
             }
         }
         LOGI("[Config] Config loaded successfully (Enabled: %d, Type: %s, Tags: %s)",

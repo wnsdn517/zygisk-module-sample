@@ -91,25 +91,31 @@ public:
         // 3. Execute Patching
         LOGI("[Zygisk] Applying patches in postAppSpecialize...");
         if (BuildPatcher::applyPatch(env, config)) {
+            std::string summary = "[Zygisk] Spoofed fields:";
+            if (config.patch_type) summary += " TYPE";
+            if (config.patch_tags) summary += " TAGS";
+            if (config.fp_mode != FingerprintMode::DISABLED) summary += " FINGERPRINT";
+            LOGI("%s", summary.c_str());
             LOGI("[Zygisk] All requested build fields successfully patched.");
 
-            // 진단용: 3초간 값 변화 감시 스레드 기동
-            JavaVM *vm = nullptr;
-            env->GetJavaVM(&vm);
-            auto *watchArgs = new WatcherArgs{vm};
-            pthread_t tid;
-            pthread_create(&tid, nullptr, watchBuildType, watchArgs);
-            pthread_detach(tid);
+            // 테스트 모드일 때만 진단용 Watcher/NativeHook 기동 (평소엔 오버헤드/로그 스팸 없음)
+            if (config.debug_mode) {
+                JavaVM *vm = nullptr;
+                env->GetJavaVM(&vm);
+                auto *watchArgs = new WatcherArgs{vm};
+                pthread_t tid;
+                pthread_create(&tid, nullptr, watchBuildType, watchArgs);
+                pthread_detach(tid);
 
-            // 진단용: JNI 함수테이블 전역 후킹 (네이티브 write 잡기)
-            jclass buildClass2 = env->FindClass("android/os/Build");
-            jfieldID typeFieldId = buildClass2
-                ? env->GetStaticFieldID(buildClass2, "TYPE", "Ljava/lang/String;")
-                : nullptr;
-            if (typeFieldId) {
-                NativeFieldHook::install(env, typeFieldId);
-            } else {
-                LOGE("[NativeHook] TYPE fieldId 획득 실패, 훅 설치 스킵");
+                jclass buildClass2 = env->FindClass("android/os/Build");
+                jfieldID typeFieldId = buildClass2
+                    ? env->GetStaticFieldID(buildClass2, "TYPE", "Ljava/lang/String;")
+                    : nullptr;
+                if (typeFieldId) {
+                    NativeFieldHook::install(env, typeFieldId);
+                } else {
+                    LOGE("[NativeHook] TYPE fieldId 획득 실패, 훅 설치 스킵");
+                }
             }
         } else {
             LOGE("[Zygisk] Failed to apply build field patches!");
