@@ -1,35 +1,55 @@
 #!/system/bin/sh
 # ============================================================
-# BuildType Fix - 설치 스크립트 (customize.sh)
-# Magisk/KernelSU 매니저가 모듈을 설치/업데이트할 때 자동 실행됨
+# BuildType Fix - install script (customize.sh)
+# Runs automatically when Magisk/KernelSU installs or updates
+# this module.
 # ============================================================
 
-ui_print "- BuildType Fix 설치 중"
+ui_print "- Installing BuildType Fix"
 
-# 이 빌드는 용량 절약을 위해 arm64-v8a만 포함되어 있음.
-# 다른 아키텍처 기기에 잘못 설치되는 걸 막기 위해 여기서 체크.
-if [ "$ARCH" != "arm64" ]; then
-    ui_print "! 이 빌드는 arm64 기기 전용입니다 (감지된 아키텍처: $ARCH)"
-    ui_print "! 다른 아키텍처가 필요하면 Application.mk에 ABI를 추가해서 다시 빌드하세요."
-    abort "지원하지 않는 아키텍처: $ARCH"
+# The zip ships native libraries for every ABI (arm64-v8a, armeabi-v7a,
+# x86, x86_64) so it installs correctly on any device without the user
+# having to pick anything. Here we auto-detect this device's actual
+# architecture and delete the .so files for every OTHER ABI, so only
+# the one this device actually needs stays on disk.
+case "$ARCH" in
+    arm64) KEEP="arm64-v8a.so" ;;
+    arm)   KEEP="armeabi-v7a.so" ;;
+    x64)   KEEP="x86_64.so" ;;
+    x86)   KEEP="x86.so" ;;
+    *)     KEEP="" ;;
+esac
+
+if [ -n "$KEEP" ] && [ -d "$MODPATH/zygisk" ]; then
+    for f in "$MODPATH"/zygisk/*.so; do
+        [ -f "$f" ] || continue
+        name=$(basename "$f")
+        if [ "$name" != "$KEEP" ]; then
+            rm -f "$f"
+        fi
+    done
+    ui_print "- Detected arch: $ARCH -> keeping $KEEP, removed the rest"
+else
+    ui_print "! Could not match a native library to arch '$ARCH', keeping all of them"
 fi
 
-# 업데이트 시 기존 사용자 설정을 새 zip의 기본값으로 덮어쓰지 않도록 보존.
-# ($MODPATH엔 지금 방금 압축 해제된 '새 zip의 기본 파일'이 들어있는 상태.
-#  기존 설치본이 있으면 그 설정 파일로 덮어써서 사용자 커스터마이징을 유지한다.)
+# Preserve user settings across updates. $MODPATH currently holds the
+# fresh default config.txt/targets.txt/remove_props.txt from this zip;
+# if a previous install exists, copy its live settings over the
+# defaults so an update doesn't silently reset the user's config.
 OLDPATH="/data/adb/modules/buildtype_fix"
 PRESERVE_FILES="config.txt targets.txt remove_props.txt"
 
 if [ -d "$OLDPATH" ]; then
-    ui_print "- 기존 설치본 감지, 사용자 설정 유지 시도"
+    ui_print "- Existing installation found, preserving your settings"
     for f in $PRESERVE_FILES; do
         if [ -f "$OLDPATH/$f" ]; then
             cp -af "$OLDPATH/$f" "$MODPATH/$f"
-            ui_print "  - $f 유지됨"
+            ui_print "  - kept $f"
         fi
     done
 else
-    ui_print "- 최초 설치, 기본 설정으로 시작합니다"
+    ui_print "- Fresh install, using default settings"
 fi
 
-ui_print "- 설치 완료. 재부팅 후 적용됩니다."
+ui_print "- Done. Reboot to apply."

@@ -67,16 +67,30 @@
 
   .searchBox { display: flex; gap: 8px; margin-bottom: 10px; }
   .searchBox input { flex: 1; margin-top: 0; }
-  .list { max-height: 44vh; overflow-y: auto; border: 1px solid var(--border); border-radius: 10px; }
-  .listRow { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-bottom: 1px solid var(--border); font-size: 13px; }
+  .list { max-height: 50vh; overflow-y: auto; border: 1px solid var(--border); border-radius: 10px; }
+  .listRow { display: flex; align-items: center; gap: 10px; padding: 12px; border-bottom: 1px solid var(--border); }
   .listRow:last-child { border-bottom: none; }
   .listRow .main { flex: 1; min-width: 0; }
-  .listRow .label { font-weight: 500; }
-  .listRow .pkg { color: var(--sub); font-size: 11px; font-family: ui-monospace, monospace; word-break: break-all; }
+  .listRow .label { font-weight: 500; font-size: 14px; margin-bottom: 2px; }
+  .listRow .pkg { color: var(--sub); font-size: 12px; font-family: ui-monospace, monospace; word-break: break-all; }
   .listRow.dim { opacity: .4; }
-  .listRow input[type=checkbox] { width: 18px; height: 18px; accent-color: var(--accent); flex-shrink: 0; }
+  .listRow input[type=checkbox] { width: 19px; height: 19px; accent-color: var(--accent); flex-shrink: 0; }
   .tag { font-size: 10px; color: var(--sub); border: 1px solid var(--border); border-radius: 6px; padding: 2px 6px; flex-shrink: 0; }
-  .emptyState { padding: 24px 12px; text-align: center; color: var(--sub); font-size: 13px; line-height: 1.6; }
+  .emptyState { padding: 28px 14px; text-align: center; color: var(--sub); font-size: 13px; line-height: 1.6; }
+
+  .propRow { padding: 12px; border-bottom: 1px solid var(--border); }
+  .propRow:last-child { border-bottom: none; }
+  .propRow .propTop { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+  .propRow .propKey { font-family: ui-monospace, monospace; font-size: 12.5px; color: var(--text); word-break: break-all; line-height: 1.4; }
+  .propRow .propValue { font-family: ui-monospace, monospace; font-size: 12px; color: var(--sub); word-break: break-all; margin-top: 4px; line-height: 1.4; }
+  .propRow .propValue.empty { font-style: italic; opacity: .6; }
+  .propRow button { flex-shrink: 0; }
+  .propRow .propActions { display: flex; gap: 6px; flex-shrink: 0; }
+  .propRow .propEditInput { width: 100%; margin-top: 6px; }
+  .propRow .propEditRow { display: flex; gap: 6px; margin-top: 8px; }
+  .propRow .propEditRow button { flex: 1; }
+  .addPropRow { display: flex; gap: 8px; margin-bottom: 10px; }
+  .addPropRow input { flex: 1; margin-top: 0; }
 
   details { border-radius: 10px; }
   details summary { cursor: pointer; font-size: 12.5px; color: var(--sub); padding: 4px 0; list-style: none; }
@@ -219,27 +233,33 @@
     </div>
   </section>
 
-  <!-- 프로퍼티 -->
+  <!-- Properties -->
   <section class="page" id="page-props">
     <div class="card">
-      <h2>현재 시스템 프로퍼티</h2>
+      <h2>System Properties</h2>
       <div class="searchBox">
-        <input type="text" id="propSearch" placeholder="프로퍼티 키/값 검색 (예: lineage)">
-        <button class="btn-ghost btn-small" id="btnPropRefresh">새로고침</button>
+        <input type="text" id="propSearch" placeholder="Filter by key or value...">
+        <button class="btn-ghost btn-small" id="btnPropRefresh">Reload</button>
       </div>
-      <div class="list" id="propList"><div class="emptyState">검색어를 입력하거나 새로고침을 눌러 조회하세요.</div></div>
+      <div class="statusText" id="propListStatus"></div>
+      <div class="addPropRow">
+        <input type="text" id="newPropKey" placeholder="key">
+        <input type="text" id="newPropValue" placeholder="value">
+        <button class="btn-primary btn-small" id="btnAddProp">Set</button>
+      </div>
+      <div class="list" id="propList"><div class="emptyState">Loading...</div></div>
     </div>
 
     <div class="card">
-      <h2>부팅 시 제거할 프로퍼티</h2>
-      <div class="desc">기기 재부팅 시 자동 삭제됩니다. 정확한 이름 또는 *문자열* 형태의 패턴(포함되는 항목 전부 삭제)을 한 줄씩 적으세요.</div>
+      <h2>Remove on Boot</h2>
+      <div class="desc">Deleted automatically on reboot. One entry per line: an exact property name, or a *substring* pattern that deletes every matching key.</div>
       <textarea id="removePropsBox" spellcheck="false" placeholder="ro.lineage.version&#10;*lineage*"></textarea>
       <div class="btn-row" style="margin-top: 10px;">
-        <button class="btn-ghost" id="btnReloadRemoveProps">새로고침</button>
-        <button class="btn-primary" id="btnSaveRemoveProps">저장</button>
+        <button class="btn-ghost" id="btnReloadRemoveProps">Reload</button>
+        <button class="btn-primary" id="btnSaveRemoveProps">Save</button>
       </div>
       <div class="btn-row" style="margin-top: 8px;">
-        <button class="btn-danger" id="btnApplyRemoveNow">지금 바로 적용 (재부팅 안 기다리고)</button>
+        <button class="btn-danger" id="btnApplyRemoveNow">Apply now (don't wait for reboot)</button>
       </div>
       <div class="statusText" id="removePropsStatus"></div>
     </div>
@@ -311,6 +331,8 @@ function flashSaved() {
   setTimeout(() => t.classList.remove('show'), 1200);
 }
 function escapeHtml(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
+// Wrap a string as a single-quoted POSIX shell argument, escaping embedded quotes safely.
+function shQuote(s) { return "'" + String(s).replace(/'/g, "'\\''") + "'"; }
 
 async function safeExec(cmd) {
   try {
@@ -332,7 +354,7 @@ document.querySelectorAll('.tab').forEach(tab => {
     if (p === 'logs') refreshLog();
     if (p === 'targets') loadAppList();
     if (p === 'test') populateTestTargets();
-    if (p === 'props') loadRemoveProps();
+    if (p === 'props') { loadRemoveProps(); if (!propsLoaded) { loadAllProps().then(renderPropList); } else { renderPropList(); } }
   });
 });
 
@@ -617,46 +639,129 @@ document.getElementById('btnAddSelected').addEventListener('click', async () => 
   }
 });
 
-// ---------- 프로퍼티: 조회 ----------
+// ---------- Properties ----------
 let allProps = [];
+let propsLoaded = false;
+const PROP_RENDER_CAP = 150;
+
+function setPropListStatus(text, cls) {
+  const el = document.getElementById('propListStatus');
+  if (!text) { el.innerHTML = ''; return; }
+  el.className = 'statusText' + (cls ? ' ' + cls : '');
+  el.innerHTML = (cls === 'active' ? '<span class="spinner"></span>' : '') + escapeHtml(text);
+}
+
 async function loadAllProps() {
+  setPropListStatus('Loading properties...', 'active');
+  document.getElementById('propList').innerHTML = '';
   const { errno, stdout } = await safeExec('getprop');
-  if (errno !== 0) { allProps = []; return; }
+  if (errno !== 0) {
+    allProps = [];
+    setPropListStatus('Failed to read properties', 'done');
+    return;
+  }
   allProps = stdout.split('\n').map(line => {
     const m = line.match(/^\[([^\]]+)\]:\s*\[([^\]]*)\]$/);
     return m ? { key: m[1], value: m[2] } : null;
-  }).filter(Boolean);
+  }).filter(Boolean).sort((a, b) => a.key.localeCompare(b.key));
+  propsLoaded = true;
+  setPropListStatus('', null);
 }
+
+async function setProp(key, value) {
+  const { errno, stderr } = await safeExec('resetprop -n ' + shQuote(key) + ' ' + shQuote(value) + ' 2>&1');
+  return errno === 0;
+}
+
 function renderPropList() {
   const q = document.getElementById('propSearch').value.trim().toLowerCase();
   const listEl = document.getElementById('propList');
-  if (!q) { listEl.innerHTML = '<div class="emptyState">검색어를 입력하세요 (전체 목록은 너무 길어서 검색 기반으로만 표시합니다)</div>'; return; }
-  const filtered = allProps.filter(p => p.key.toLowerCase().includes(q) || p.value.toLowerCase().includes(q)).slice(0, 200);
-  if (filtered.length === 0) { listEl.innerHTML = '<div class="emptyState">일치하는 프로퍼티가 없습니다</div>'; return; }
-  listEl.innerHTML = filtered.map(p =>
-    '<div class="listRow"><div class="main">' +
-    '<div class="pkg">' + escapeHtml(p.key) + '</div>' +
-    '<div class="label" style="font-size:12px; font-family: ui-monospace, monospace; word-break: break-all;">' + (escapeHtml(p.value) || '<i style="color:var(--sub)">(빈 값)</i>') + '</div>' +
-    '</div><button class="btn-ghost btn-small" data-delprop="' + escapeHtml(p.key) + '">삭제</button></div>'
-  ).join('');
+  const filtered = q ? allProps.filter(p => p.key.toLowerCase().includes(q) || p.value.toLowerCase().includes(q)) : allProps;
+
+  if (filtered.length === 0) {
+    listEl.innerHTML = '<div class="emptyState">' + (q ? 'No properties match "' + escapeHtml(q) + '"' : 'No properties found') + '</div>';
+    return;
+  }
+
+  const slice = filtered.slice(0, PROP_RENDER_CAP);
+  listEl.innerHTML = slice.map(p =>
+    '<div class="propRow" data-key="' + escapeHtml(p.key) + '">' +
+    '<div class="propTop">' +
+    '<div class="main">' +
+    '<div class="propKey">' + escapeHtml(p.key) + '</div>' +
+    '<div class="propValue' + (p.value ? '' : ' empty') + '" data-role="display">' + (escapeHtml(p.value) || '(empty)') + '</div>' +
+    '</div>' +
+    '<div class="propActions">' +
+    '<button class="btn-ghost btn-small" data-editprop="' + escapeHtml(p.key) + '">Edit</button>' +
+    '<button class="btn-ghost btn-small" data-delprop="' + escapeHtml(p.key) + '">Delete</button>' +
+    '</div>' +
+    '</div>' +
+    '</div>'
+  ).join('') + (filtered.length > slice.length
+    ? '<div class="emptyState">+ ' + (filtered.length - slice.length) + ' more — narrow with search</div>'
+    : '');
+
   listEl.querySelectorAll('[data-delprop]').forEach(btn => {
     btn.addEventListener('click', async () => {
       const key = btn.dataset.delprop;
-      await safeExec("resetprop --delete '" + key + "' 2>/dev/null");
-      showToast(key + ' 삭제됨');
+      await safeExec('resetprop --delete ' + shQuote(key) + ' 2>/dev/null');
+      showToast(key + ' removed');
       await loadAllProps();
       renderPropList();
     });
   });
+
+  listEl.querySelectorAll('[data-editprop]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const key = btn.dataset.editprop;
+      const row = listEl.querySelector('.propRow[data-key="' + CSS.escape(key) + '"]');
+      if (!row || row.querySelector('.propEditInput')) return;
+      const current = (allProps.find(p => p.key === key) || {}).value || '';
+      const displayEl = row.querySelector('[data-role="display"]');
+      displayEl.style.display = 'none';
+
+      const wrap = document.createElement('div');
+      wrap.innerHTML =
+        '<input type="text" class="propEditInput" value="' + escapeHtml(current) + '">' +
+        '<div class="propEditRow">' +
+        '<button class="btn-ghost btn-small" data-cancel>Cancel</button>' +
+        '<button class="btn-primary btn-small" data-save>Save</button>' +
+        '</div>';
+      row.querySelector('.main').appendChild(wrap);
+      const input = wrap.querySelector('input');
+      input.focus();
+
+      wrap.querySelector('[data-cancel]').addEventListener('click', () => {
+        wrap.remove();
+        displayEl.style.display = '';
+      });
+      wrap.querySelector('[data-save]').addEventListener('click', async () => {
+        const newValue = input.value;
+        const ok = await setProp(key, newValue);
+        showToast(ok ? key + ' updated (resets on reboot)' : 'Failed to set ' + key);
+        await loadAllProps();
+        renderPropList();
+      });
+    });
+  });
 }
 document.getElementById('btnPropRefresh').addEventListener('click', async () => {
-  document.getElementById('propList').innerHTML = '<div class="emptyState">불러오는 중...</div>';
   await loadAllProps();
   renderPropList();
 });
-document.getElementById('propSearch').addEventListener('input', async () => {
-  if (allProps.length === 0) await loadAllProps();
-  renderPropList();
+document.getElementById('propSearch').addEventListener('input', renderPropList);
+document.getElementById('btnAddProp').addEventListener('click', async () => {
+  const key = document.getElementById('newPropKey').value.trim();
+  const value = document.getElementById('newPropValue').value;
+  if (!key) { showToast('Enter a property key'); return; }
+  const ok = await setProp(key, value);
+  showToast(ok ? key + ' set (resets on reboot)' : 'Failed to set ' + key);
+  if (ok) {
+    document.getElementById('newPropKey').value = '';
+    document.getElementById('newPropValue').value = '';
+    await loadAllProps();
+    renderPropList();
+  }
 });
 
 // ---------- 프로퍼티: 제거 목록 (remove_props.txt) ----------
@@ -695,11 +800,11 @@ document.getElementById('btnApplyRemoveNow').addEventListener('click', async () 
       const { stdout } = await safeExec("getprop | grep -i '" + pattern + "' | sed -E 's/^\\[([^]]+)\\].*/\\1/'");
       const keys = stdout.split('\n').map(k => k.trim()).filter(Boolean);
       for (const key of keys) {
-        const r = await safeExec("resetprop --delete '" + key + "' 2>/dev/null");
+        const r = await safeExec('resetprop --delete ' + shQuote(key) + ' 2>/dev/null');
         if (r.errno === 0) removed++;
       }
     } else {
-      const r = await safeExec("resetprop --delete '" + line + "' 2>/dev/null");
+      const r = await safeExec('resetprop --delete ' + shQuote(line) + ' 2>/dev/null');
       if (r.errno === 0) removed++;
     }
   }
